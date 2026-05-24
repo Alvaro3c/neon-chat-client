@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useAuth from '../../hooks/useAuth'
 import Button from '../../components/shared/Button'
@@ -26,6 +26,7 @@ function GoogleIcon() {
 function LoginPage() {
   const { user, loading, signInWithGoogle } = useAuth()
   const navigate = useNavigate()
+  const [signingIn, setSigningIn] = useState(false)
 
   // If already authenticated, skip straight to the app
   useEffect(() => {
@@ -33,6 +34,19 @@ function LoginPage() {
       navigate('/', { replace: true })
     }
   }, [user, loading, navigate])
+
+  // Guard against double-clicks and concurrent popup attempts
+  const handleSignIn = async () => {
+    if (signingIn) return
+    setSigningIn(true)
+    try {
+      await signInWithGoogle()
+    } catch (err) {
+      console.error('[Login] Sign-in error:', err)
+    } finally {
+      setSigningIn(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -76,12 +90,13 @@ function LoginPage() {
         <Button
           variant="primary"
           size="md"
-          onClick={signInWithGoogle}
+          onClick={handleSignIn}
+          disabled={signingIn}
           className="login__google-btn"
           aria-label="Continue with Google"
         >
           <GoogleIcon />
-          continue with google
+          {signingIn ? 'connecting...' : 'continue with google'}
         </Button>
 
         <p className="login__disclaimer">

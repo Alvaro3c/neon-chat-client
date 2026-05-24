@@ -1,0 +1,79 @@
+/* ── Button ─────────────────────────────────────────────────
+   Variants: primary | ghost | danger
+   Sizes:    sm | md (default)
+   ──────────────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-weight: 600;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  user-select: none;
+  border: 1px solid transparent;
+  outline: none;
+}
+
+/* Sizes */
+.btn--sm {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-sm);
+}
+.btn--md {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-base);
+}
+
+/* Primary — filled cyan */
+.btn--primary {
+  background: color-mix(in oklch, var(--color-neon-cyan) 20%, transparent);
+  border-color: var(--color-neon-cyan);
+  color: var(--color-neon-cyan);
+  box-shadow: var(--glow-cyan);
+}
+.btn--primary:hover:not(:disabled) {
+  background: color-mix(in oklch, var(--color-neon-cyan) 30%, transparent);
+  box-shadow: var(--glow-cyan-lg);
+}
+.btn--primary:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* Ghost — transparent with border */
+.btn--ghost {
+  background: transparent;
+  border-color: color-mix(in oklch, var(--color-neon-cyan) 40%, transparent);
+  color: var(--color-text-muted);
+}
+.btn--ghost:hover:not(:disabled) {
+  border-color: var(--color-neon-cyan);
+  color: var(--color-neon-cyan);
+  background: color-mix(in oklch, var(--color-neon-cyan) 10%, transparent);
+}
+
+/* Danger */
+.btn--danger {
+  background: transparent;
+  border-color: color-mix(in oklch, var(--color-danger) 50%, transparent);
+  color: var(--color-danger);
+}
+.btn--danger:hover:not(:disabled) {
+  background: color-mix(in oklch, var(--color-danger) 20%, transparent);
+  border-color: var(--color-danger);
+}
+
+/* Disabled state */
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Icon-only square button */
+.btn--icon {
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+}

@@ -1,0 +1,133 @@
+/* ── App shell layout ───────────────────────────────────────
+   Full-viewport flex column:  header | body (centered panel) | footer
+   Chat windows float as position:fixed overlays above everything.
+   ──────────────────────────────────────────────────────────── */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.app__header {
+  flex-shrink: 0;
+  border-bottom: 2px solid color-mix(in oklch, var(--color-neon-cyan) 40%, transparent);
+  background: color-mix(in oklch, var(--color-card) 85%, transparent);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px color-mix(in oklch, var(--color-neon-cyan) 15%, transparent);
+  z-index: 10;
+}
+.app__header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-5);
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+.app__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 22px;
+}
+.app__title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  letter-spacing: 0.04em;
+}
+.app__tagline {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  display: none;
+}
+@media (min-width: 600px) { .app__tagline { display: block; } }
+
+/* ── Body — dark backdrop, buddy list centered ───────────── */
+.app__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: var(--space-4) var(--space-4);
+  gap: var(--space-3);
+  overflow-y: auto;
+  background: var(--color-bg);
+}
+
+/* ── User section (header right) ────────────────────────── */
+.app__user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.app__user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-neon-cyan);
+  box-shadow: var(--glow-cyan);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.app__user-name {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  display: none;
+}
+
+@media (min-width: 480px) {
+  .app__user-name { display: block; }
+}
+
+.app__sign-out {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  opacity: 0.45;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid color-mix(in oklch, var(--color-border) 60%, transparent);
+  border-radius: var(--radius-sm);
+  transition: all 0.15s ease;
+  line-height: 1;
+}
+
+.app__sign-out:hover {
+  opacity: 1;
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+  background: color-mix(in oklch, var(--color-danger) 10%, transparent);
+}
+
+/* ── Full-screen loading skeleton ────────────────────────── */
+.app-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: var(--color-bg);
+  font-size: 3rem;
+}
+
+/* ── Footer — slim status bar ────────────────────────────── */
+.app__footer {
+  flex-shrink: 0;
+  border-top: 1px solid color-mix(in oklch, var(--color-neon-cyan) 20%, transparent);
+  background: color-mix(in oklch, var(--color-card) 60%, transparent);
+  padding: var(--space-1) var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.app__footer-text {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}

@@ -1,0 +1,159 @@
+/* ============================================================
+   LoginPage — Full-screen auth view
+   Matches the punk/emo 2000s neon aesthetic of the app.
+   ============================================================ */
+
+.login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--color-bg);
+  gap: var(--space-8);
+  padding: var(--space-6) var(--space-4);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Loading state */
+.login--loading {
+  font-size: 3rem;
+}
+
+/* ── Retro scanline overlay ─────────────────────────────── */
+.login__scanlines {
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    color-mix(in oklch, var(--color-neon-cyan) 2%, transparent) 2px,
+    color-mix(in oklch, var(--color-neon-cyan) 2%, transparent) 4px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Brand header ───────────────────────────────────────── */
+.login__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: 22px;
+  position: relative;
+  z-index: 1;
+}
+
+.login__brand-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  letter-spacing: 0.04em;
+}
+
+/* ── Card ───────────────────────────────────────────────── */
+.login__card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  box-shadow:
+    var(--glow-panel),
+    0 0 0 1px color-mix(in oklch, var(--color-neon-cyan) 8%, transparent),
+    0 20px 60px color-mix(in oklch, var(--color-bg) 60%, transparent);
+  position: relative;
+  z-index: 1;
+}
+
+.login__card-deco {
+  color: var(--color-neon-cyan);
+  font-size: var(--text-xs);
+  opacity: 0.5;
+  letter-spacing: 0.4em;
+  margin-bottom: calc(-1 * var(--space-3));
+}
+
+/* ── Title ──────────────────────────────────────────────── */
+.login__title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  color: var(--color-neon-cyan);
+  text-shadow: var(--glow-cyan);
+  text-align: center;
+}
+
+/* ── Message ────────────────────────────────────────────── */
+.login__message {
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: 1.75;
+}
+
+.login__message-highlight {
+  color: var(--color-neon-cyan);
+  font-weight: 700;
+  text-shadow: var(--glow-cyan);
+}
+
+.login__message-sub {
+  display: inline-block;
+  margin-top: var(--space-1);
+  font-size: var(--text-xs);
+  opacity: 0.65;
+}
+
+/* ── Divider ────────────────────────────────────────────── */
+.login__divider {
+  width: 100%;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  opacity: 0.4;
+  letter-spacing: 0.12em;
+}
+
+/* ── Google button ──────────────────────────────────────── */
+/*
+   Reuses the shared Button (.btn--primary) but overrides
+   width and sizing for a centered full-width login CTA.
+   We do NOT use Google brand colors — we match the neon theme.
+*/
+.login__google-btn {
+  width: 100%;
+  justify-content: center;
+  padding: var(--space-3) var(--space-5) !important;
+  font-size: var(--text-sm) !important;
+  letter-spacing: 0.04em;
+  gap: var(--space-3) !important;
+}
+
+.login__google-icon {
+  flex-shrink: 0;
+}
+
+/* ── Disclaimer ─────────────────────────────────────────── */
+.login__disclaimer {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  opacity: 0.4;
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+/* ── Footer ─────────────────────────────────────────────── */
+.login__footer {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  opacity: 0.35;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}

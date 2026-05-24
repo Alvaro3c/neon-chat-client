@@ -1,0 +1,189 @@
+/* ============================================================
+   NEON CHAT — Global CSS
+   Punk Rock / Emo 2000s theme: Black + Electric Cyan
+   ============================================================ */
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Nunito:wght@400;600;700&display=swap');
+
+/* ── Root tokens ──────────────────────────────────────────── */
+:root {
+  /* Background layers */
+  --color-bg:          oklch(0.05 0 0);          /* near-black app background */
+  --color-card:        oklch(0.08 0.01 200);     /* slightly cyan-tinted dark card */
+  --color-sidebar:     oklch(0.03 0 0);          /* deepest black for sidebar */
+  --color-input-bg:    oklch(0.10 0.02 200);     /* dark input field */
+
+  /* Neon accent palette */
+  --color-neon-cyan:   oklch(0.85 0.20 190);    /* electric cyan — primary accent */
+  --color-neon-green:  oklch(0.70 0.14 210);    /* teal-green — secondary accent */
+  --color-neon-pink:   oklch(0.78 0.18 195);    /* same-family pink/cyan */
+
+  /* Text */
+  --color-text:        oklch(0.92 0 0);          /* main text (near-white) */
+  --color-text-muted:  oklch(0.82 0.08 190);      /* de-emphasized text — cyan-tinted for readability */
+
+  /* Borders */
+  --color-border:      oklch(0.22 0.06 195);    /* subtle cyan-tinted border */
+  --color-border-soft: oklch(0.15 0.03 195);    /* even softer */
+
+  /* Status dots */
+  --color-status-online:  oklch(0.90 0.22 145); /* bright neon green */
+  --color-status-away:    #fde047;               /* bright yellow */
+  --color-status-busy:    #f87171;               /* bright coral-red */
+  --color-status-offline: #9ca3af;               /* light gray */
+
+  /* Destructive */
+  --color-danger: oklch(0.55 0.22 25);
+
+  /* Radius */
+  --radius-sm:  4px;
+  --radius-md:  6px;
+  --radius-lg:  10px;
+  --radius-full: 9999px;
+
+  /* Spacing scale (multiples of 4 px) */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+
+  /* Typography */
+  --font-display: 'Permanent Marker', 'Comic Sans MS', cursive;
+  --font-body:    'Nunito', 'Quicksand', sans-serif;
+
+  --text-xs:   15px;
+  --text-sm:   17px;
+  --text-base: 19px;
+  --text-lg:   24px;
+  --text-xl:   30px;
+  --text-2xl:  38px;
+
+  /* Neon glow shadows */
+  --glow-cyan:      0 0 8px var(--color-neon-cyan),
+                    0 0 18px color-mix(in oklch, var(--color-neon-cyan) 40%, transparent);
+  --glow-cyan-lg:   0 0 12px var(--color-neon-cyan),
+                    0 0 30px color-mix(in oklch, var(--color-neon-cyan) 30%, transparent);
+  --glow-green:     0 0 8px var(--color-neon-green),
+                    0 0 18px color-mix(in oklch, var(--color-neon-green) 40%, transparent);
+  --glow-panel:     0 0 30px color-mix(in oklch, var(--color-neon-cyan) 20%, transparent);
+}
+
+/* ── Theme overrides ──────────────────────────────────────── */
+.theme-cyan {
+  --color-neon-cyan:   oklch(0.85 0.20 190);
+  --color-neon-green:  oklch(0.70 0.14 210);
+  --color-neon-pink:   oklch(0.78 0.18 195);
+  --color-border:      oklch(0.22 0.06 195);
+}
+.theme-orange {
+  --color-neon-cyan:   oklch(0.80 0.20 55);
+  --color-neon-green:  oklch(0.75 0.18 45);
+  --color-neon-pink:   oklch(0.75 0.18 45);
+  --color-border:      oklch(0.22 0.08 45);
+}
+.theme-purple {
+  --color-neon-cyan:   oklch(0.60 0.22 290);
+  --color-neon-green:  oklch(0.55 0.25 300);
+  --color-neon-pink:   oklch(0.55 0.25 300);
+  --color-border:      oklch(0.22 0.10 300);
+}
+.theme-green {
+  --color-neon-cyan:   oklch(0.85 0.28 145);
+  --color-neon-green:  oklch(0.80 0.25 150);
+  --color-neon-pink:   oklch(0.80 0.25 150);
+  --color-border:      oklch(0.30 0.10 150);
+}
+
+/* ── Reset & base ─────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+input,
+textarea {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--color-text);
+}
+
+/* ── Scrollbar styling ────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in oklch, var(--color-neon-cyan) 50%, transparent);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neon-cyan);
+}
+
+/* ── Neon glow utility classes ────────────────────────────── */
+.neon-text-cyan {
+  color: var(--color-neon-cyan);
+  text-shadow: var(--glow-cyan);
+}
+.neon-text-green {
+  color: var(--color-neon-green);
+  text-shadow: var(--glow-green);
+}
+
+/* ── Keyframe animations ──────────────────────────────────── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.animate-pulse     { animation: pulse 2s ease-in-out infinite; }
+.animate-spin-slow { animation: spin-slow 3s linear infinite; }
+.animate-slide-in  { animation: slide-in 0.15s ease-out forwards; }
+.animate-fade-in   { animation: fade-in 0.2s ease-out forwards; }

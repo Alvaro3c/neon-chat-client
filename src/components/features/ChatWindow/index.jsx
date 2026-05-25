@@ -11,6 +11,24 @@ const IconRestore = () => <span title="Restore">❐</span>
 const IconClose = () => <span title="Close">✕</span>
 const IconSend = () => <span>➤</span>
 
+const IconEmoji = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+    <line x1="9" y1="9" x2="9.01" y2="9" />
+    <line x1="15" y1="9" x2="15.01" y2="9" />
+  </svg>
+)
+
+const IconBuzz = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M2 12c0-1 .5-2 1.5-2.5M6 7.5C7.5 5.5 9.5 4 12 4s4.5 1.5 6 3.5" />
+    <path d="M4.5 16.5C3.5 15 3 13.5 3 12M22 12c0 1-.5 2-1.5 2.5" />
+    <path d="M18 16.5c-1.5 2-3.5 3.5-6 3.5s-4.5-1.5-6-3.5" />
+    <circle cx="12" cy="12" r="2" fill="currentColor" />
+  </svg>
+)
+
 // How many minimized pills fit per row before wrapping to the next line
 const PILLS_PER_ROW = 5
 // Horizontal slot width per pill (px) — should fit the pill + a small gap
@@ -36,15 +54,27 @@ const PILL_OFFSET_Y = 16
  * @param {Function} onUnminimize     — called when the user restores the pill
  */
 function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimizedIndex, onMinimize, onUnminimize }) {
-  const { contacts, messages, closeChat, focusChat, sendMessage, addReaction } = useChat()
+  const { contacts, messages, closeChat, focusChat, sendMessage, addReaction, typingStatus } = useChat()
   const contact = contacts.find((c) => c.id === contactId)
 
   const [inputValue, setInputValue] = useState('')
   const [isMaximized, setIsMaximized] = useState(false)
   const [position, setPosition] = useState(initialPosition)
   const [isDragging, setIsDragging] = useState(false)
+  const [isBuzzing, setIsBuzzing] = useState(false)
   const dragOffset = useRef({ x: 0, y: 0 })
   const windowRef = useRef(null)
+
+  // ── Toolbar handlers (logic filled in later steps) ──────────
+  function handleBuzz() {
+    // Step 3: buzz logic will go here
+    setIsBuzzing(true)
+    setTimeout(() => setIsBuzzing(false), 600)
+  }
+
+  function handleOpenEmoji() {
+    // Step 4: open emoji modal logic will go here
+  }
 
   // ── Drag logic ──────────────────────────────────────────────
   const handleTitleBarMouseDown = useCallback((e) => {
@@ -184,21 +214,61 @@ function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimized
         onReact={(msgId, emoji) => addReaction(contactId, msgId, emoji)}
       />
 
-      {/* Input area */}
-      <div className="chat-window__input-area">
-        <Input
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="type ur msg..."
-        />
-        <button
-          className="chat-window__send-btn"
-          onClick={(e) => { e.stopPropagation(); handleSend() }}
-          disabled={!inputValue.trim()}
-        >
-          <IconSend />
-        </button>
+      {/* Bottom section: toolbar + input row */}
+      <div className="chat-window__bottom">
+
+        {/* Toolbar — buzz & emoticons */}
+        <div className="chat-window__toolbar">
+          <button
+            className="chat-window__tool-btn"
+            title="Open emoticons (Ctrl+I)"
+            onClick={(e) => { e.stopPropagation(); handleOpenEmoji() }}
+          >
+            <IconEmoji />
+            <span>Emoticons</span>
+          </button>
+
+          <button
+            className={`chat-window__tool-btn chat-window__tool-btn--buzz ${isBuzzing ? 'chat-window__tool-btn--buzzing' : ''}`}
+            title="Send a Buzz!"
+            onClick={(e) => { e.stopPropagation(); handleBuzz() }}
+          >
+            <IconBuzz />
+            <span>Buzz!</span>
+          </button>
+        </div>
+
+        {/* Input row */}
+        <div className="chat-window__input-row">
+          <Input
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="type ur msg..."
+          />
+          <button
+            className="chat-window__send-btn"
+            onClick={(e) => { e.stopPropagation(); handleSend() }}
+            disabled={!inputValue.trim()}
+          >
+            <IconSend />
+          </button>
+        </div>
+
+        {/* Typing indicator — always rendered to avoid layout shifts */}
+        <div className="chat-window__typing-bar">
+          {typingStatus[contactId] && (
+            <>
+              <span className="chat-window__typing-text">{contact.name} is typing</span>
+              <span className="chat-window__typing-dots" aria-hidden="true">
+                <span />
+                <span />
+                <span />
+              </span>
+            </>
+          )}
+        </div>
+
       </div>
     </div>
   )

@@ -114,19 +114,78 @@
   background: color-mix(in oklch, oklch(0.72 0.25 25) 20%, transparent);
 }
 
-/* ── Input area ──────────────────────────────────────────── */
-.chat-window__input-area {
+/* ── Bottom section (toolbar + input row) ────────────────── */
+.chat-window__bottom {
   display: flex;
-  gap: var(--space-2);
-  align-items: center;
-  padding: var(--space-2) var(--space-3) var(--space-5);
+  flex-direction: column;
   border-top: 1px solid color-mix(in oklch, var(--color-neon-cyan) 25%, transparent);
   background: color-mix(in oklch, var(--color-card) 80%, transparent);
   flex-shrink: 0;
 }
 
+/* Toolbar — sits above the input row */
+.chat-window__toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-bottom: 1px solid color-mix(in oklch, var(--color-neon-cyan) 12%, transparent);
+  width: 100%;
+}
+
+.chat-window__tool-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-family: var(--font-body);
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.chat-window__tool-btn:hover {
+  color: var(--color-neon-cyan);
+  background: color-mix(in oklch, var(--color-neon-cyan) 10%, transparent);
+}
+
+/* Buzz button — gets a pink/magenta accent to stand out */
+.chat-window__tool-btn--buzz {
+  color: color-mix(in oklch, var(--color-neon-cyan) 70%, oklch(0.78 0.18 330));
+}
+.chat-window__tool-btn--buzz:hover {
+  color: oklch(0.78 0.18 330);
+  background: color-mix(in oklch, oklch(0.78 0.18 330) 12%, transparent);
+}
+
+/* Buzz shake animation — triggered when isBuzzing = true */
+@keyframes buzz-shake {
+  0%   { transform: translateX(0); }
+  15%  { transform: translateX(-4px) rotate(-2deg); }
+  30%  { transform: translateX(4px)  rotate(2deg); }
+  45%  { transform: translateX(-3px) rotate(-1deg); }
+  60%  { transform: translateX(3px)  rotate(1deg); }
+  75%  { transform: translateX(-2px); }
+  90%  { transform: translateX(2px); }
+  100% { transform: translateX(0); }
+}
+
+.chat-window__tool-btn--buzzing {
+  animation: buzz-shake 0.6s ease;
+  color: oklch(0.78 0.18 330) !important;
+}
+
+/* Input row */
+.chat-window__input-row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  padding: var(--space-2) var(--space-3) var(--space-5);
+}
+
 /* Taller input inside the chat window — scoped to avoid affecting other uses */
-.chat-window__input-area .input {
+.chat-window__input-row .input {
   height: 55px;
   border-radius: var(--radius-full);
   padding-left: var(--space-5);
@@ -158,6 +217,48 @@
   cursor: not-allowed;
   border-color: var(--color-border);
   color: var(--color-text-muted);
+}
+
+/* ── Typing indicator bar ────────────────────────────────── */
+.chat-window__typing-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: 22px;                /* fixed height — no layout shift */
+  padding: 0 var(--space-4);
+  font-size: 12px;
+  font-family: var(--font-body);
+  font-style: italic;
+  color: var(--color-text-muted);
+  border-top: 1px solid color-mix(in oklch, var(--color-neon-cyan) 10%, transparent);
+}
+
+.chat-window__typing-text {
+  color: color-mix(in oklch, var(--color-neon-cyan) 65%, var(--color-text-muted));
+}
+
+/* Three bouncing dots */
+.chat-window__typing-dots {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.chat-window__typing-dots span {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: color-mix(in oklch, var(--color-neon-cyan) 60%, transparent);
+  animation: typing-dot-bounce 1.2s ease-in-out infinite;
+}
+
+.chat-window__typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.chat-window__typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing-dot-bounce {
+  0%, 60%, 100% { transform: translateY(0);    opacity: 0.4; }
+  30%            { transform: translateY(-4px); opacity: 1;   }
 }
 
 /* ── Minimized pill ──────────────────────────────────────── */

@@ -4,6 +4,7 @@ import Input from '../../shared/Input'
 import { useChat } from '../../../context/ChatContext'
 import useDragAndDrop from '../../../hooks/useDragAndDrop'
 import { auth, getUserByEmail, createConversation } from '../../../services/firebase'
+import * as chatSocket from '../../../services/chatSocket'
 import './ConversationSidebar.css'
 
 // ── Theme config ─────────────────────────────────────────────
@@ -106,8 +107,10 @@ function ConversationSidebar() {
 
   // ── Mood editing ──────────────────────────────────────────
   function commitMood() {
-    setUserMood(tempMood.trim() || userMood)
+    const next = tempMood.trim() || userMood
+    setUserMood(next)
     setEditingMood(false)
+    chatSocket.updateMood(next)
   }
   function handleMoodKey(e) {
     if (e.key === 'Enter') commitMood()
@@ -437,7 +440,7 @@ function ConversationSidebar() {
                   key={s.value}
                   className={`sidebar__status-option ${userStatus === s.value ? 'sidebar__status-option--active' : ''}`}
                   style={{ color: s.color }}
-                  onClick={() => { setUserStatus(s.value); setStatusMenuOpen(false) }}
+                  onClick={() => { setUserStatus(s.value); setStatusMenuOpen(false); chatSocket.updateStatus(s.value) }}
                 >
                   {s.label}
                 </button>

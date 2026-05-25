@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext'
 import useAuth from './hooks/useAuth'
 import ConversationSidebar from './components/features/ConversationSidebar'
 import ChatWindow from './components/features/ChatWindow'
+import LoginToast from './components/shared/LoginToast'
 import LoginPage from './pages/Login'
 import './styles/global.css'
 import './App.css'
@@ -29,7 +30,7 @@ function ProtectedRoute({ children }) {
 
 // ── Inner app (needs ChatContext in scope) ───────────────────
 function AppShell() {
-  const { openChats, minimizeChat, unminimizeChat } = useChat()
+  const { openChats, minimizeChat, unminimizeChat, loginToasts, dismissLoginToast } = useChat()
   const { user, signOut } = useAuth()
 
   // Only the minimized chats, in order — used to assign each pill its column slot
@@ -88,6 +89,9 @@ function AppShell() {
             : '| no chats open rn'}
         </span>
       </footer>
+
+      {/* ── Friend sign-in toasts (bottom-right, above everything) */}
+      <LoginToast toasts={loginToasts} onDismiss={dismissLoginToast} />
 
       {/* ── Floating chat windows (rendered over everything) ── */}
       {openChats.map((chat) => {

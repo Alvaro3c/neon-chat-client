@@ -8,6 +8,17 @@ import {
   declineConversation,
 } from '../services/firebase'
 
+// ── Login-sound singleton ─────────────────────────────────────
+// Reuse a single Audio instance to avoid overlapping sounds.
+const loginAudio = new Audio('/assets/sounds/inicio-sesion.mp3')
+loginAudio.volume = 0.7
+
+function playLoginSound() {
+  // Rewind and play; silently ignore autoplay policy rejections.
+  loginAudio.currentTime = 0
+  loginAudio.play().catch(() => {})
+}
+
 const ChatContext = createContext(null)
 
 /**
@@ -43,6 +54,49 @@ export function ChatProvider({ children }) {
   const [typingStatus, setTypingStatus]       = useState({}) // { [conversationId]: boolean }
   const [buzzSignals, setBuzzSignals]         = useState({}) // { [conversationId]: number } — increments on each incoming buzz
   const typingTimers = useRef({})
+
+  // ── Login toast notifications ──────────────────────────────
+  const [loginToasts, setLoginToasts] = useState([]) // [{ id, name, exiting }]
+
+  /**
+   * Ref that mirrors contactStatuses so the socket handler always has
+   * fresh values without introducing stale-closure issues.
+   */
+  const prevStatusesRef = useRef({}) // { [uid]: { status, mood } }
+
+  /**
+   * Ref that mirrors the contacts array for the same reason —
+   * we need to look up a contact's display name inside the socket handler.
+   */
+  const contactsRef = useRef([])
+  useEffect(() => { contactsRef.current = contacts }, [contacts])
+
+  /** Show a login toast and play the sign-in sound. */
+  const addLoginToast = useCallback((name) => {
+    const id = `login-toast-${Date.now()}-${Math.random()}`
+    setLoginToasts((prev) => [...prev, { id, name, exiting: false }])
+    playLoginSound()
+
+    // Begin exit animation after 7 s, then remove from DOM at 7.35 s
+    setTimeout(() => {
+      setLoginToasts((prev) =>
+        prev.map((t) => (t.id === id ? { ...t, exiting: true } : t))
+      )
+      setTimeout(() => {
+        setLoginToasts((prev) => prev.filter((t) => t.id !== id))
+      }, 350)
+    }, 7_000)
+  }, [])
+
+  /** Dismiss a toast immediately (called on click). */
+  const dismissLoginToast = useCallback((id) => {
+    setLoginToasts((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, exiting: true } : t))
+    )
+    setTimeout(() => {
+      setLoginToasts((prev) => prev.filter((t) => t.id !== id))
+    }, 350)
+  }, [])
 
   // ── Firestore subscription ────────────────────────────────────
   // Subscribe to all conversations for the current user; build the
@@ -169,6 +223,25 @@ export function ChatProvider({ children }) {
       }
 
       case 'contact_status': {
+        const prev = prevStatusesRef.current[event.uid]
+
+        // Only toast when we already knew this contact's status (skip the
+        // initial presence flood right after connection) AND the contact
+        // is transitioning from any non-online state to online.
+        if (
+          prev !== undefined &&
+          prev.status !== 'online' &&
+          event.status === 'online'
+        ) {
+          const contact = contactsRef.current.find((c) => c.uid === event.uid)
+          const name    = contact?.name || 'Alguien'
+          addLoginToast(name)
+        }
+
+        // Keep the ref in sync before the state update so the next event
+        // sees the correct "previous" value.
+        prevStatusesRef.current[event.uid] = { status: event.status, mood: event.mood }
+
         setContactStatuses((prev) => ({
           ...prev,
           [event.uid]: { status: event.status, mood: event.mood },
@@ -343,6 +416,7 @@ export function ChatProvider({ children }) {
     contactStatuses,
     typingStatus,
     buzzSignals,
+    loginToasts,
     addSystemMessage,
     openChat,
     closeChat,
@@ -353,6 +427,7 @@ export function ChatProvider({ children }) {
     addReaction,
     acceptRequest,
     declineRequest,
+    dismissLoginToast,
   }
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>

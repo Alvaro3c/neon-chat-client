@@ -9,23 +9,23 @@ import './ConversationSidebar.css'
 
 // ── Theme config ─────────────────────────────────────────────
 const THEMES = [
-  { value: 'cyan',   label: 'Cyan',   dot: 'oklch(0.85 0.20 190)' },
-  { value: 'orange', label: 'Orange', dot: 'oklch(0.80 0.20 55)'  },
+  { value: 'cyan', label: 'Cyan', dot: 'oklch(0.85 0.20 190)' },
+  { value: 'orange', label: 'Orange', dot: 'oklch(0.80 0.20 55)' },
   { value: 'purple', label: 'Purple', dot: 'oklch(0.60 0.22 290)' },
-  { value: 'green',  label: 'Green',  dot: 'oklch(0.55 0.20 145)' },
+  { value: 'green', label: 'Green', dot: 'oklch(0.55 0.20 145)' },
 ]
 
 // ── User status config ────────────────────────────────────────
 const USER_STATUSES = [
-  { value: 'online',       label: 'Online',                    color: 'var(--color-status-online)' },
-  { value: 'away',         label: 'Away',                      color: 'var(--color-status-away)'   },
-  { value: 'busy',         label: 'Busy',                      color: 'var(--color-status-busy)'   },
-  { value: 'sober',        label: 'sober JK unless',           color: 'var(--color-neon-cyan)'     },
-  { value: 'breaking',     label: 'Breaking stuff',            color: 'var(--color-status-busy)'   },
-  { value: 'noregret',     label: 'I got no regret right now', color: 'var(--color-neon-cyan)'     },
-  { value: 'train',        label: 'There is a train',          color: 'var(--color-status-away)'   },
-  { value: 'misrep',       label: 'Misrepresented',            color: 'var(--color-text-muted)'    },
-  { value: 'scotty',       label: "Scotty doesn't know",       color: 'var(--color-status-online)' },
+  { value: 'online', label: 'Online', color: 'var(--color-status-online)' },
+  { value: 'away', label: 'Away', color: 'var(--color-status-away)' },
+  { value: 'busy', label: 'Busy', color: 'var(--color-status-busy)' },
+  { value: 'sober', label: 'sober JK unless', color: 'var(--color-neon-cyan)' },
+  { value: 'breaking', label: 'Breaking stuff', color: 'var(--color-status-busy)' },
+  { value: 'noregret', label: 'I got no regret right now', color: 'var(--color-neon-cyan)' },
+  { value: 'train', label: 'There is a train', color: 'var(--color-status-away)' },
+  { value: 'misrep', label: 'Misrepresented', color: 'var(--color-text-muted)' },
+  { value: 'scotty', label: "Scotty doesn't know", color: 'var(--color-status-online)' },
 ]
 
 /**
@@ -59,31 +59,31 @@ function ConversationSidebar() {
   const { getDragProps, getDropProps } = useDragAndDrop(contacts, setContacts)
 
   // Search & filter
-  const [search, setSearch]   = useState('')
-  const [filter, setFilter]   = useState('all') // 'all' | 'online' | 'requests'
+  const [search, setSearch] = useState('')
+  const [filter, setFilter] = useState('all') // 'all' | 'online' | 'requests'
 
   // New conversation
-  const [addingConv, setAddingConv]     = useState(false)
+  const [addingConv, setAddingConv] = useState(false)
   const [newConvEmail, setNewConvEmail] = useState('')
-  const [convError, setConvError]       = useState('')
-  const [convLoading, setConvLoading]   = useState(false)
+  const [convError, setConvError] = useState('')
+  const [convLoading, setConvLoading] = useState(false)
 
   // Theme
-  const [theme, setTheme]             = useState('cyan')
+  const [theme, setTheme] = useState('cyan')
   const [themeMenuOpen, setThemeMenuOpen] = useState(false)
   const themeRef = useRef(null)
 
   // User profile
-  const [userName, setUserName]               = useState(() => auth.currentUser?.displayName || 'xX_You_Xx')
-  const [editingName, setEditingName]         = useState(false)
-  const [tempName, setTempName]               = useState(userName)
+  const [userName, setUserName] = useState(() => auth.currentUser?.displayName || 'xX_You_Xx')
+  const [editingName, setEditingName] = useState(false)
+  const [tempName, setTempName] = useState(userName)
 
-  const [userMood, setUserMood]               = useState('~*feeling emo today*~')
-  const [editingMood, setEditingMood]         = useState(false)
-  const [tempMood, setTempMood]               = useState(userMood)
+  const [userMood, setUserMood] = useState('~*feeling emo today*~')
+  const [editingMood, setEditingMood] = useState(false)
+  const [tempMood, setTempMood] = useState(userMood)
 
-  const [userStatus, setUserStatus]           = useState('online')
-  const [statusMenuOpen, setStatusMenuOpen]   = useState(false)
+  const [userStatus, setUserStatus] = useState('online')
+  const [statusMenuOpen, setStatusMenuOpen] = useState(false)
   const statusRef = useRef(null)
 
   // ── Theme switch ──────────────────────────────────────────
@@ -183,13 +183,13 @@ function ConversationSidebar() {
 
   // ── Filtered contacts ─────────────────────────────────────
   const filtered = contacts.filter((c) => {
-    const matchName   = c.name.toLowerCase().includes(search.toLowerCase())
+    const matchName = c.name.toLowerCase().includes(search.toLowerCase())
     const matchFilter = filter === 'all' || getLiveStatus(c) === 'online'
     return matchName && matchFilter
   })
 
   const onlineCount = contacts.filter((c) => getLiveStatus(c) === 'online').length
-  const openIds     = openChats.map((oc) => oc.contactId)
+  const openIds = openChats.map((oc) => oc.contactId)
 
   const currentStatus = USER_STATUSES.find((s) => s.value === userStatus)
 
@@ -199,7 +199,13 @@ function ConversationSidebar() {
       <div className="sidebar__header">
         <div className="sidebar__header-center">
           <h1 className="sidebar__title">~*Buddy List*~</h1>
-          <p className="sidebar__online-count">{onlineCount} friends online rn</p>
+          <p className="sidebar__online-count">
+            {onlineCount === 0
+              ? 'no friends online'
+              : onlineCount === 1
+              ? '1 friend online'
+              : `${onlineCount} friends online`}
+          </p>
         </div>
 
         {/* Theme switcher */}
@@ -270,7 +276,7 @@ function ConversationSidebar() {
             className="sidebar__new-conv-btn"
             onClick={() => setAddingConv(true)}
           >
-            + New Conversation
+            + Add a new buddy
           </button>
         )}
 
@@ -343,9 +349,9 @@ function ConversationSidebar() {
             </li>
           ) : (
             filtered.map((contact, index) => {
-              const isOpen     = openIds.includes(contact.id)
+              const isOpen = openIds.includes(contact.id)
               const liveStatus = getLiveStatus(contact)
-              const liveMood   = getLiveMood(contact)
+              const liveMood = getLiveMood(contact)
               return (
                 <li
                   key={contact.id}

@@ -5,11 +5,11 @@ import { useChat } from '../../../context/ChatContext'
 import './ChatWindow.css'
 
 // Simple SVG icon helpers — no external icon library
-const IconMinus    = () => <span title="Minimise">─</span>
+const IconMinus = () => <span title="Minimise">─</span>
 const IconMaximize = () => <span title="Maximise">□</span>
-const IconRestore  = () => <span title="Restore">❐</span>
-const IconClose    = () => <span title="Close">✕</span>
-const IconSend     = () => <span>➤</span>
+const IconRestore = () => <span title="Restore">❐</span>
+const IconClose = () => <span title="Close">✕</span>
+const IconSend = () => <span>➤</span>
 
 /**
  * ChatWindow
@@ -25,13 +25,13 @@ function ChatWindow({ contactId, zIndex, initialPosition }) {
   const { contacts, messages, closeChat, focusChat, sendMessage, addReaction } = useChat()
   const contact = contacts.find((c) => c.id === contactId)
 
-  const [inputValue, setInputValue]   = useState('')
+  const [inputValue, setInputValue] = useState('')
   const [isMinimized, setIsMinimized] = useState(false)
   const [isMaximized, setIsMaximized] = useState(false)
-  const [position, setPosition]       = useState(initialPosition)
-  const [isDragging, setIsDragging]   = useState(false)
+  const [position, setPosition] = useState(initialPosition)
+  const [isDragging, setIsDragging] = useState(false)
   const dragOffset = useRef({ x: 0, y: 0 })
-  const windowRef  = useRef(null)
+  const windowRef = useRef(null)
 
   // ── Drag logic ──────────────────────────────────────────────
   const handleTitleBarMouseDown = useCallback((e) => {
@@ -49,7 +49,7 @@ function ChatWindow({ contactId, zIndex, initialPosition }) {
 
     function onMove(e) {
       setPosition({
-        x: Math.max(0, Math.min(e.clientX - dragOffset.current.x, window.innerWidth  - 380)),
+        x: Math.max(0, Math.min(e.clientX - dragOffset.current.x, window.innerWidth - 380)),
         y: Math.max(0, Math.min(e.clientY - dragOffset.current.y, window.innerHeight - 80)),
       })
     }
@@ -113,13 +113,13 @@ function ChatWindow({ contactId, zIndex, initialPosition }) {
       className={[
         'chat-window',
         'animate-fade-in',
-        isDragging   ? 'chat-window--dragging'   : '',
-        isMaximized  ? 'chat-window--maximized'  : '',
+        isDragging ? 'chat-window--dragging' : '',
+        isMaximized ? 'chat-window--maximized' : '',
       ].filter(Boolean).join(' ')}
       style={{
         zIndex,
-        left:   isMaximized ? 0 : position.x,
-        top:    isMaximized ? 0 : position.y,
+        left: isMaximized ? 0 : position.x,
+        top: isMaximized ? 0 : position.y,
       }}
       onClick={() => focusChat(contactId)}
     >
@@ -171,7 +171,7 @@ function ChatWindow({ contactId, zIndex, initialPosition }) {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="type ur msg... rawr"
+          placeholder="type ur msg..."
         />
         <button
           className="chat-window__send-btn"

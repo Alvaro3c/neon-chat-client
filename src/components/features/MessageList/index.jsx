@@ -53,7 +53,6 @@ function MessageList({ messages = [], contactName = 'them', onReact }) {
       <div className="message-list">
         <div className="message-list__empty">
           <p className="message-list__empty-title">~*no messages yet*~</p>
-          <p className="message-list__empty-hint">say something emo!</p>
         </div>
       </div>
     )

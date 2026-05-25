@@ -64,7 +64,7 @@ function LoginPage() {
       {/* Brand */}
       <div className="login__brand">
         <span className="animate-pulse" aria-hidden="true">💀</span>
-        <h1 className="login__brand-title neon-text-cyan">xX_DarkMessenger_Xx</h1>
+        <h1 className="login__brand-title neon-text-cyan">xX_NeonMessenger_Xx</h1>
         <span className="animate-pulse" aria-hidden="true">💀</span>
       </div>
 

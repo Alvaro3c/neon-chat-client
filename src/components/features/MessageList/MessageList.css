@@ -120,6 +120,17 @@
   cursor: default;
 }
 
+/* ── Inline emoticon in message text ─────────────────────── */
+.message-emoticon {
+  width: 19px;
+  height: 19px;
+  vertical-align: middle;
+  display: inline-block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  margin: 0 1px;
+}
+
 /* ── Timestamp ───────────────────────────────────────────── */
 .message-timestamp {
   font-family: var(--font-body);

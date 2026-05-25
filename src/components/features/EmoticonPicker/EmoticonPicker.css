@@ -1,0 +1,66 @@
+/* ── EmoticonPicker ────────────────────────────────────────────
+   Floating grid that slides up from the toolbar.
+   Positioned absolute inside .chat-window__bottom (position:relative)
+   so it overlaps the message area without leaving the chat window.
+   ──────────────────────────────────────────────────────────────── */
+
+.emoticon-picker {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background: var(--color-card);
+  border: 1px solid color-mix(in oklch, var(--color-neon-cyan) 40%, transparent);
+  border-bottom: none;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  box-shadow:
+    var(--glow-panel),
+    0 -6px 24px color-mix(in oklch, var(--color-neon-cyan) 8%, transparent);
+  padding: var(--space-2);
+  max-height: 220px;
+  overflow-y: auto;
+  animation: emoticon-picker-in 0.12s ease-out;
+}
+
+/* Custom scrollbar — neon style */
+.emoticon-picker::-webkit-scrollbar       { width: 4px; }
+.emoticon-picker::-webkit-scrollbar-track { background: transparent; }
+.emoticon-picker::-webkit-scrollbar-thumb {
+  background: color-mix(in oklch, var(--color-neon-cyan) 30%, transparent);
+  border-radius: 2px;
+}
+
+@keyframes emoticon-picker-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+.emoticon-picker__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
+  gap: 2px;
+}
+
+.emoticon-picker__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s ease, transform 0.1s ease;
+}
+
+.emoticon-picker__btn:hover {
+  background: color-mix(in oklch, var(--color-neon-cyan) 18%, transparent);
+  transform: scale(1.3);
+}
+
+.emoticon-picker__img {
+  width: 19px;
+  height: 19px;
+  /* Keep the original pixel-art crispness */
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}

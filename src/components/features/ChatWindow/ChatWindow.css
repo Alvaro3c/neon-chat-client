@@ -153,6 +153,8 @@
   border-top: 1px solid color-mix(in oklch, var(--color-neon-cyan) 25%, transparent);
   background: color-mix(in oklch, var(--color-card) 80%, transparent);
   flex-shrink: 0;
+  /* Needed so EmoticonPicker (position:absolute; bottom:100%) anchors here */
+  position: relative;
 }
 
 /* Toolbar — sits above the input row */
@@ -180,6 +182,12 @@
 .chat-window__tool-btn:hover {
   color: var(--color-neon-cyan);
   background: color-mix(in oklch, var(--color-neon-cyan) 10%, transparent);
+}
+
+/* Active state — emoticons button is highlighted while the picker is open */
+.chat-window__tool-btn--active {
+  color: var(--color-neon-cyan);
+  background: color-mix(in oklch, var(--color-neon-cyan) 15%, transparent);
 }
 
 /* Buzz button — gets a pink/magenta accent to stand out */
@@ -216,11 +224,50 @@
   padding: var(--space-2) var(--space-3) var(--space-5);
 }
 
-/* Taller input inside the chat window — scoped to avoid affecting other uses */
-.chat-window__input-row .input {
-  height: 55px;
+/* ── Composer (contenteditable) ─────────────────────────── */
+/* Replaces the plain <input> so emoticon <img> nodes can be inline */
+.chat-window__composer {
+  flex: 1;
+  min-height: 55px;
+  max-height: 110px;
+  overflow-y: auto;
   border-radius: var(--radius-full);
-  padding-left: var(--space-5);
+  padding: var(--space-3) var(--space-5);
+  background: color-mix(in oklch, var(--color-surface, #0a0a0f) 80%, transparent);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  outline: none;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  word-break: break-word;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.chat-window__composer:focus {
+  border-color: color-mix(in oklch, var(--color-neon-cyan) 50%, transparent);
+  box-shadow: var(--glow-cyan);
+}
+
+/* Placeholder via CSS — shown when div is truly empty */
+.chat-window__composer:empty::before {
+  content: attr(data-placeholder);
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+/* Inline emoticon image inside the composer */
+.chat-composer__emoticon {
+  width: 19px;
+  height: 19px;
+  vertical-align: middle;
+  display: inline-block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  margin: 0 1px;
 }
 
 .chat-window__send-btn {

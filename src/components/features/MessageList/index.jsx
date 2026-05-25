@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { parseEmoticons, getEmoticonSrc } from '../../../utils/emoticons'
 import './MessageList.css'
 
 const REACTIONS = ['💀', '🖤', '⭐', '🔥', '😭']
@@ -21,6 +22,29 @@ function MessageList({ messages = [], contactName = 'them', onReact }) {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
+
+  /**
+   * Parse a message text string and return inline React elements.
+   * Shortcodes (e.g. "(8)", ":)") are rendered as <img> emoticons;
+   * everything else is plain text.
+   */
+  function renderText(text) {
+    const tokens = parseEmoticons(text)
+    return tokens.map((token, i) => {
+      if (token.type === 'emoticon') {
+        return (
+          <img
+            key={i}
+            src={getEmoticonSrc(token.filename)}
+            alt={token.shortcode}
+            title={`${token.name}  ${token.shortcode}`}
+            className="message-emoticon"
+          />
+        )
+      }
+      return <span key={i}>{token.value}</span>
+    })
+  }
 
   function formatTime(date) {
     return new Date(date).toLocaleTimeString('en-US', {
@@ -86,7 +110,7 @@ function MessageList({ messages = [], contactName = 'them', onReact }) {
               </span>
               {' '}
               <span className={`message-text message-text--${msg.sender}`}>
-                {msg.text}
+                {renderText(msg.text)}
               </span>
 
               {msg.reaction && (

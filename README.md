@@ -1,16 +1,6 @@
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. en la ventana del chatbox quiero añadir una barra encima del input de mensajes donde irá la opcion de hacer un zumbido como el de messenger y emoticonos
+2. en la parte de abajo del input habrña otra barra, que al igual que la del punto 1, ocupara el 100% de su contenedor que pondrá hellboy is typing... siendo hellboy el nick del otro usuario
+3. la lógica para generar un zumbido
+4. la lógica para abrir el modal de emoticonos y agregarlo al mensaje
+5. atajos de teclado para los emoticonos (igual que el msn messenger)
+6. la lógica de mostrar si el otro usuario esta escribiendo

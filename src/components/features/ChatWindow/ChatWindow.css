@@ -117,6 +117,8 @@
 /* Taller input inside the chat window — scoped to avoid affecting other uses */
 .chat-window__input-area .input {
   height: 55px;
+  border-radius: var(--radius-full);
+  padding-left: var(--space-5);
 }
 
 .chat-window__send-btn {

@@ -8,7 +8,18 @@
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
-  background: var(--color-bg);
+  background:
+    radial-gradient(
+      ellipse at 80% 95%,
+      color-mix(in oklch, var(--color-neon-cyan) 18%, transparent) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at 15% 10%,
+      color-mix(in oklch, var(--color-neon-cyan) 10%, transparent) 0%,
+      transparent 45%
+    ),
+    #000;
 }
 
 /* ── Header ──────────────────────────────────────────────── */
@@ -58,7 +69,7 @@
   padding: var(--space-4) var(--space-4);
   gap: var(--space-3);
   overflow-y: auto;
-  background: var(--color-bg);
+  background: transparent;
 }
 
 /* ── User section (header right) ────────────────────────── */

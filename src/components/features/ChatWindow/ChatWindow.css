@@ -8,7 +8,18 @@
   flex-direction: column;
   width: 380px;
   height: 500px;
-  background: var(--color-card);
+  background:
+    radial-gradient(
+      ellipse at 90% 100%,
+      color-mix(in oklch, var(--color-neon-cyan) 14%, transparent) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse at 10% 0%,
+      color-mix(in oklch, var(--color-neon-cyan) 8%, transparent) 0%,
+      transparent 50%
+    ),
+    var(--color-card);
   border: 2px solid color-mix(in oklch, var(--color-neon-cyan) 50%, transparent);
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -97,10 +108,10 @@
   background: color-mix(in oklch, var(--color-neon-cyan) 20%, transparent);
 }
 .chat-window__ctrl-btn--close {
-  color: var(--color-danger);
+  color: oklch(0.72 0.25 25);
 }
 .chat-window__ctrl-btn--close:hover {
-  background: color-mix(in oklch, var(--color-danger) 20%, transparent);
+  background: color-mix(in oklch, oklch(0.72 0.25 25) 20%, transparent);
 }
 
 /* ── Input area ──────────────────────────────────────────── */

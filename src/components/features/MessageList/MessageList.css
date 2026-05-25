@@ -10,7 +10,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  background: color-mix(in oklch, var(--color-bg) 70%, transparent);
+  background: transparent;
 }
 
 /* ── Empty state ─────────────────────────────────────────── */

@@ -370,3 +370,23 @@
   font-size: var(--text-sm);
   color: var(--color-neon-cyan);
 }
+
+/* ── New-message notification blink ──────────────────────── */
+/* The pill pulses with the theme accent colour until the user
+   clicks to open the window (isBlinking → false).            */
+@keyframes pill-notify {
+  0%, 100% {
+    border-color: color-mix(in oklch, var(--color-neon-cyan) 50%, transparent);
+    box-shadow: var(--glow-panel);
+  }
+  50% {
+    border-color: var(--color-neon-cyan);
+    box-shadow:
+      var(--glow-cyan-lg),
+      0 0 28px color-mix(in oklch, var(--color-neon-cyan) 70%, transparent);
+  }
+}
+
+.chat-window--has-notification .chat-window__minimized-bar {
+  animation: pill-notify 0.75s ease-in-out infinite;
+}

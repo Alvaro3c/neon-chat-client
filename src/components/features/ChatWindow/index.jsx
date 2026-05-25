@@ -11,6 +11,7 @@ function playBuzzSound() {
   audio.play().catch(() => {}) // silently ignore autoplay policy blocks
 }
 
+
 // Simple SVG icon helpers — no external icon library
 const IconMinus    = () => <span title="Minimise">─</span>
 const IconMaximize = () => <span title="Maximise">□</span>
@@ -132,7 +133,7 @@ function buildEmoticonImg(emoticon) {
  * @param {Function} onUnminimize
  */
 function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimizedIndex, onMinimize, onUnminimize }) {
-  const { contacts, messages, closeChat, focusChat, sendMessage, addReaction, typingStatus, buzzSignals, addSystemMessage } = useChat()
+  const { contacts, messages, closeChat, focusChat, sendMessage, addReaction, typingStatus, buzzSignals, newMessageSignals, addSystemMessage } = useChat()
   const contact = contacts.find((c) => c.id === contactId)
 
   const [isEmpty, setIsEmpty]           = useState(true)
@@ -141,6 +142,7 @@ function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimized
   const [isDragging, setIsDragging]     = useState(false)
   const [isBuzzing, setIsBuzzing]       = useState(false)
   const [isPickerOpen, setIsPickerOpen] = useState(false)
+  const [isBlinking, setIsBlinking]     = useState(false)
 
   const dragOffset      = useRef({ x: 0, y: 0 })
   const windowRef       = useRef(null)
@@ -153,6 +155,13 @@ function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimized
   // Captures the buzz count at mount time so we never replay a buzz that
   // arrived while this window was closed or hadn't been opened yet.
   const lastSeenBuzzRef = useRef(buzzSignals[contactId] ?? 0)
+
+  // Always start at 0 so a pending notification is detected even when
+  // the component mounts AFTER the message arrived (e.g. auto-open).
+  const lastSeenMsgSignalRef = useRef(0)
+  // Mirror isMinimized as a ref so the effect below always reads the live value
+  const isMinimizedRef = useRef(isMinimized)
+  useEffect(() => { isMinimizedRef.current = isMinimized }, [isMinimized])
 
   // ── React to incoming buzz ────────────────────────────────────
   useEffect(() => {
@@ -169,6 +178,24 @@ function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimized
     }
     playBuzzSound() // only the receiver hears it
   }, [buzzSignals[contactId]]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── React to incoming messages ────────────────────────────────
+  // Play sound on every new message from the other person.
+  // If the window is minimized, also blink the pill.
+  useEffect(() => {
+    const current = newMessageSignals[contactId] ?? 0
+    if (current <= lastSeenMsgSignalRef.current) return
+    lastSeenMsgSignalRef.current = current
+
+    // Sound is handled in ChatContext (works even when this component isn't mounted).
+    // Here we only manage the visual blink on the minimized pill.
+    if (isMinimizedRef.current) setIsBlinking(true)
+  }, [newMessageSignals[contactId]]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Clear blink as soon as the user opens the window
+  useEffect(() => {
+    if (!isMinimized) setIsBlinking(false)
+  }, [isMinimized])
 
   // ── Toolbar handlers ──────────────────────────────────────────
   function handleBuzz() {
@@ -326,7 +353,7 @@ function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimized
 
     return (
       <div
-        className="chat-window chat-window--minimized animate-fade-in"
+        className={`chat-window chat-window--minimized animate-fade-in${isBlinking ? ' chat-window--has-notification' : ''}`}
         style={{ zIndex, left: pillLeft, bottom: pillBottom }}
         onClick={onUnminimize}
       >

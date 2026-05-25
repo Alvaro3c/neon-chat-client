@@ -19,6 +19,21 @@ function playLoginSound() {
   loginAudio.play().catch(() => {})
 }
 
+// ── New-message sound singleton ───────────────────────────────
+// Played here (context level) so it works even when the chat
+// window is closed — no mounted component required.
+// preload='auto' tells the browser to fetch & buffer the file at
+// module-load time, so the first play() call is instant (no network
+// round-trip on each incoming message).
+const newMessageAudio = new Audio('/assets/sounds/new-message-1.mp3')
+newMessageAudio.preload = 'auto'
+newMessageAudio.volume  = 0.7
+
+function playNewMessageSound() {
+  newMessageAudio.currentTime = 0
+  newMessageAudio.play().catch(() => {})
+}
+
 const ChatContext = createContext(null)
 
 /**
@@ -50,9 +65,10 @@ export function ChatProvider({ children }) {
   const [activeContactId, setActiveContactId] = useState(null)
 
   // Live data from the WebSocket
-  const [contactStatuses, setContactStatuses] = useState({}) // { [uid]: { status, mood } }
-  const [typingStatus, setTypingStatus]       = useState({}) // { [conversationId]: boolean }
-  const [buzzSignals, setBuzzSignals]         = useState({}) // { [conversationId]: number } — increments on each incoming buzz
+  const [contactStatuses, setContactStatuses]         = useState({}) // { [uid]: { status, mood } }
+  const [typingStatus, setTypingStatus]               = useState({}) // { [conversationId]: boolean }
+  const [buzzSignals, setBuzzSignals]                 = useState({}) // { [conversationId]: number } — increments on each incoming buzz
+  const [newMessageSignals, setNewMessageSignals]     = useState({}) // { [conversationId]: number } — increments on each incoming 'them' message
   const typingTimers = useRef({})
 
   // ── Login toast notifications ──────────────────────────────
@@ -177,6 +193,36 @@ export function ChatProvider({ children }) {
             },
           ],
         }))
+        // Notify for incoming messages from the other participant
+        if (sender === 'them') {
+          playNewMessageSound()
+
+          // Increment the signal so ChatWindow knows to blink the pill
+          setNewMessageSignals((prev) => ({
+            ...prev,
+            [event.conversationId]: (prev[event.conversationId] ?? 0) + 1,
+          }))
+
+          // If the chat window isn't open yet, auto-open it as a minimized pill
+          // so the blink is visible. Uses the same nested-setter pattern as
+          // focusChat / unminimizeChat to get a fresh zIndex without stale closure.
+          const convId = event.conversationId
+          setMaxZ((z) => {
+            const nextZ = z + 1
+            setOpenChats((prev) => {
+              if (prev.some((c) => c.contactId === convId)) return prev // already open → leave as-is
+              const offset = prev.length * 30
+              const cx = Math.round(window.innerWidth  / 2 - 190)
+              const cy = Math.round(window.innerHeight / 2 - 250)
+              const position = {
+                x: Math.max(8, Math.min(cx + offset, window.innerWidth  - 396)),
+                y: Math.max(8, Math.min(cy + offset, window.innerHeight - 520)),
+              }
+              return [...prev, { contactId: convId, zIndex: nextZ, position, isMinimized: true }]
+            })
+            return nextZ
+          })
+        }
         break
       }
 
@@ -416,6 +462,7 @@ export function ChatProvider({ children }) {
     contactStatuses,
     typingStatus,
     buzzSignals,
+    newMessageSignals,
     loginToasts,
     addSystemMessage,
     openChat,

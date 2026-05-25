@@ -9,16 +9,12 @@
   width: 380px;
   height: 500px;
   background:
-    radial-gradient(
-      ellipse at 90% 100%,
+    radial-gradient(ellipse at 90% 100%,
       color-mix(in oklch, var(--color-neon-cyan) 14%, transparent) 0%,
-      transparent 60%
-    ),
-    radial-gradient(
-      ellipse at 10% 0%,
+      transparent 60%),
+    radial-gradient(ellipse at 10% 0%,
       color-mix(in oklch, var(--color-neon-cyan) 8%, transparent) 0%,
-      transparent 50%
-    ),
+      transparent 50%),
     var(--color-card);
   border: 2px solid color-mix(in oklch, var(--color-neon-cyan) 50%, transparent);
   border-radius: var(--radius-lg);
@@ -26,9 +22,11 @@
   box-shadow: var(--glow-panel);
   transition: box-shadow 0.2s ease;
 }
+
 .chat-window:hover {
   box-shadow: var(--glow-cyan-lg), var(--glow-panel);
 }
+
 .chat-window--dragging {
   cursor: grabbing;
   user-select: none;
@@ -49,23 +47,56 @@
 }
 
 @keyframes window-buzz {
-  0%   { transform: translate(0,    0)    rotate(0deg);    }
-  10%  { transform: translate(-8px, -4px) rotate(-1.5deg); }
-  20%  { transform: translate( 8px,  4px) rotate( 1.5deg); }
-  30%  { transform: translate(-6px,  3px) rotate(-1deg);   }
-  40%  { transform: translate( 6px, -3px) rotate( 1deg);   }
-  50%  { transform: translate(-4px,  2px) rotate(-0.5deg); }
-  60%  { transform: translate( 4px, -2px) rotate( 0.5deg); }
-  70%  { transform: translate(-2px,  1px) rotate(0deg);    }
-  80%  { transform: translate( 2px, -1px) rotate(0deg);    }
-  90%  { transform: translate(-1px,  0);                   }
-  100% { transform: translate(0,    0);                    }
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  10% {
+    transform: translate(-8px, -4px) rotate(-1.5deg);
+  }
+
+  20% {
+    transform: translate(8px, 4px) rotate(1.5deg);
+  }
+
+  30% {
+    transform: translate(-6px, 3px) rotate(-1deg);
+  }
+
+  40% {
+    transform: translate(6px, -3px) rotate(1deg);
+  }
+
+  50% {
+    transform: translate(-4px, 2px) rotate(-0.5deg);
+  }
+
+  60% {
+    transform: translate(4px, -2px) rotate(0.5deg);
+  }
+
+  70% {
+    transform: translate(-2px, 1px) rotate(0deg);
+  }
+
+  80% {
+    transform: translate(2px, -1px) rotate(0deg);
+  }
+
+  90% {
+    transform: translate(-1px, 0);
+  }
+
+  100% {
+    transform: translate(0, 0);
+  }
 }
 
 /* Triggered via DOM ref: parent gets --buzzed, inner layer animates */
 .chat-window--buzzed .chat-window__shake-layer {
   animation: window-buzz 0.8s ease-in-out;
 }
+
 .chat-window--maximized {
   width: 100% !important;
   height: 100% !important;
@@ -80,16 +111,17 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--space-2) var(--space-3);
-  background: linear-gradient(
-    90deg,
-    color-mix(in oklch, var(--color-neon-cyan) 25%, transparent),
-    color-mix(in oklch, var(--color-neon-green) 15%, transparent)
-  );
+  background: linear-gradient(90deg,
+      color-mix(in oklch, var(--color-neon-cyan) 25%, transparent),
+      color-mix(in oklch, var(--color-neon-green) 15%, transparent));
   border-bottom: 1px solid color-mix(in oklch, var(--color-neon-cyan) 30%, transparent);
   cursor: grab;
   flex-shrink: 0;
 }
-.chat-window__titlebar--no-drag { cursor: default; }
+
+.chat-window__titlebar--no-drag {
+  cursor: default;
+}
 
 .chat-window__contact {
   display: flex;
@@ -97,6 +129,7 @@
   gap: var(--space-2);
   min-width: 0;
 }
+
 .chat-window__contact-name {
   font-family: var(--font-display);
   font-size: var(--text-sm);
@@ -107,6 +140,7 @@
   text-overflow: ellipsis;
   max-width: 180px;
 }
+
 .chat-window__contact-mood {
   font-family: var(--font-body);
   font-size: var(--text-xs);
@@ -125,6 +159,7 @@
   gap: var(--space-1);
   flex-shrink: 0;
 }
+
 .chat-window__ctrl-btn {
   display: flex;
   align-items: center;
@@ -136,12 +171,15 @@
   transition: background 0.12s ease;
   font-size: 14px;
 }
+
 .chat-window__ctrl-btn:hover {
   background: color-mix(in oklch, var(--color-neon-cyan) 20%, transparent);
 }
+
 .chat-window__ctrl-btn--close {
   color: oklch(0.72 0.25 25);
 }
+
 .chat-window__ctrl-btn--close:hover {
   background: color-mix(in oklch, oklch(0.72 0.25 25) 20%, transparent);
 }
@@ -194,6 +232,7 @@
 .chat-window__tool-btn--buzz {
   color: color-mix(in oklch, var(--color-neon-cyan) 70%, oklch(0.78 0.18 330));
 }
+
 .chat-window__tool-btn--buzz:hover {
   color: oklch(0.78 0.18 330);
   background: color-mix(in oklch, oklch(0.78 0.18 330) 12%, transparent);
@@ -201,14 +240,37 @@
 
 /* Buzz shake animation — triggered when isBuzzing = true */
 @keyframes buzz-shake {
-  0%   { transform: translateX(0); }
-  15%  { transform: translateX(-4px) rotate(-2deg); }
-  30%  { transform: translateX(4px)  rotate(2deg); }
-  45%  { transform: translateX(-3px) rotate(-1deg); }
-  60%  { transform: translateX(3px)  rotate(1deg); }
-  75%  { transform: translateX(-2px); }
-  90%  { transform: translateX(2px); }
-  100% { transform: translateX(0); }
+  0% {
+    transform: translateX(0);
+  }
+
+  15% {
+    transform: translateX(-4px) rotate(-2deg);
+  }
+
+  30% {
+    transform: translateX(4px) rotate(2deg);
+  }
+
+  45% {
+    transform: translateX(-3px) rotate(-1deg);
+  }
+
+  60% {
+    transform: translateX(3px) rotate(1deg);
+  }
+
+  75% {
+    transform: translateX(-2px);
+  }
+
+  90% {
+    transform: translateX(2px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
 }
 
 .chat-window__tool-btn--buzzing {
@@ -283,14 +345,17 @@
   transition: all 0.15s ease;
   font-size: 16px;
 }
+
 .chat-window__send-btn:enabled {
   background: color-mix(in oklch, var(--color-neon-cyan) 15%, transparent);
   box-shadow: var(--glow-cyan);
 }
+
 .chat-window__send-btn:enabled:hover {
   background: color-mix(in oklch, var(--color-neon-cyan) 25%, transparent);
   box-shadow: var(--glow-cyan-lg);
 }
+
 .chat-window__send-btn:disabled {
   opacity: 0.35;
   cursor: not-allowed;
@@ -303,7 +368,8 @@
   display: flex;
   align-items: center;
   gap: var(--space-1);
-  height: 22px;                /* fixed height — no layout shift */
+  height: 22px;
+  /* fixed height — no layout shift */
   padding: 0 var(--space-4);
   font-size: 12px;
   font-family: var(--font-body);
@@ -332,12 +398,27 @@
   animation: typing-dot-bounce 1.2s ease-in-out infinite;
 }
 
-.chat-window__typing-dots span:nth-child(2) { animation-delay: 0.2s; }
-.chat-window__typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+.chat-window__typing-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.chat-window__typing-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
 
 @keyframes typing-dot-bounce {
-  0%, 60%, 100% { transform: translateY(0);    opacity: 0.4; }
-  30%            { transform: translateY(-4px); opacity: 1;   }
+
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
 }
 
 /* ── Minimized pill ──────────────────────────────────────── */
@@ -351,6 +432,7 @@
   overflow: visible;
   cursor: pointer;
 }
+
 .chat-window__minimized-bar {
   display: flex;
   align-items: center;
@@ -362,9 +444,11 @@
   box-shadow: var(--glow-panel);
   transition: box-shadow 0.15s ease;
 }
+
 .chat-window__minimized-bar:hover {
   box-shadow: var(--glow-cyan-lg);
 }
+
 .chat-window__minimized-name {
   font-family: var(--font-display);
   font-size: var(--text-sm);
@@ -372,13 +456,21 @@
 }
 
 /* ── New-message notification blink ──────────────────────── */
-/* The pill pulses with the theme accent colour until the user
-   clicks to open the window (isBlinking → false).            */
+/* Three chained animations share the same keyframe but with
+   increasing durations, creating a naturally decaying frequency:
+     0 – 2.4 s  → fast  (8 × 0.30 s)
+     2.4 – 5.4 s → medium (4 × 0.75 s)
+     5.4 s – ∞  → slow  (∞ × 2.50 s)
+   Each phase starts exactly when the previous one ends (delay =
+   sum of previous durations), so there are no jumps or flashes. */
 @keyframes pill-notify {
-  0%, 100% {
+
+  0%,
+  100% {
     border-color: color-mix(in oklch, var(--color-neon-cyan) 50%, transparent);
     box-shadow: var(--glow-panel);
   }
+
   50% {
     border-color: var(--color-neon-cyan);
     box-shadow:
@@ -388,5 +480,11 @@
 }
 
 .chat-window--has-notification .chat-window__minimized-bar {
-  animation: pill-notify 0.75s ease-in-out infinite;
+  animation:
+    pill-notify 0.50s ease-in-out 0s 8,
+    /* fast   — 2.4 s total */
+    pill-notify 0.75s ease-in-out 2.4s 4,
+    /* medium — 3.0 s total */
+    pill-notify 2.50s ease-in-out 5.4s infinite;
+  /* slow   — ∞           */
 }

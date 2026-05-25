@@ -2,7 +2,13 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import MessageList from '../MessageList'
 import Input from '../../shared/Input'
 import { useChat } from '../../../context/ChatContext'
+import * as chatSocket from '../../../services/chatSocket'
 import './ChatWindow.css'
+
+function playBuzzSound() {
+  const audio = new Audio('/assets/sounds/zumbido.mp3')
+  audio.play().catch(() => {}) // silently ignore autoplay policy blocks
+}
 
 // Simple SVG icon helpers — no external icon library
 const IconMinus = () => <span title="Minimise">─</span>
@@ -54,22 +60,51 @@ const PILL_OFFSET_Y = 16
  * @param {Function} onUnminimize     — called when the user restores the pill
  */
 function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimizedIndex, onMinimize, onUnminimize }) {
-  const { contacts, messages, closeChat, focusChat, sendMessage, addReaction, typingStatus } = useChat()
+  const { contacts, messages, closeChat, focusChat, sendMessage, addReaction, typingStatus, buzzSignals, addSystemMessage } = useChat()
   const contact = contacts.find((c) => c.id === contactId)
 
   const [inputValue, setInputValue] = useState('')
   const [isMaximized, setIsMaximized] = useState(false)
   const [position, setPosition] = useState(initialPosition)
   const [isDragging, setIsDragging] = useState(false)
-  const [isBuzzing, setIsBuzzing] = useState(false)
+  const [isBuzzing, setIsBuzzing] = useState(false) // button animation (sent)
   const dragOffset = useRef({ x: 0, y: 0 })
   const windowRef = useRef(null)
 
-  // ── Toolbar handlers (logic filled in later steps) ──────────
+  // Captures the buzz count at mount time so we never replay a buzz that
+  // arrived while this window was closed or hadn't been opened yet.
+  const lastSeenBuzzRef = useRef(buzzSignals[contactId] ?? 0)
+
+  // ── React to incoming buzz ────────────────────────────────
+  useEffect(() => {
+    const current = buzzSignals[contactId] ?? 0
+    // Ignore signals that were already "seen" before this window mounted
+    if (current <= lastSeenBuzzRef.current) return
+    lastSeenBuzzRef.current = current
+
+    // Shake the window via the DOM ref — bypasses the React render cycle
+    // so the CSS animation always restarts cleanly.
+    const el = windowRef.current
+    if (el) {
+      el.classList.remove('chat-window--buzzed')
+      void el.offsetWidth                    // force reflow → animation restarts
+      el.classList.add('chat-window--buzzed')
+      setTimeout(() => el.classList.remove('chat-window--buzzed'), 820)
+    }
+
+    // Only the receiver plays the sound
+    playBuzzSound()
+  }, [buzzSignals[contactId]]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Toolbar handlers ──────────────────────────────────────
   function handleBuzz() {
-    // Step 3: buzz logic will go here
+    // Animate the button only — the receiver plays the sound, not the sender
     setIsBuzzing(true)
     setTimeout(() => setIsBuzzing(false), 600)
+    // Send over the socket
+    chatSocket.sendBuzz(contactId)
+    // Local confirmation message (server only notifies the other side)
+    addSystemMessage(contactId, `You sent ${contact?.name ?? 'them'} a buzz! 〰️`)
   }
 
   function handleOpenEmoji() {
@@ -162,7 +197,7 @@ function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimized
       className={[
         'chat-window',
         'animate-fade-in',
-        isDragging ? 'chat-window--dragging' : '',
+        isDragging  ? 'chat-window--dragging' : '',
         isMaximized ? 'chat-window--maximized' : '',
       ].filter(Boolean).join(' ')}
       style={{
@@ -172,6 +207,14 @@ function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimized
       }}
       onClick={() => focusChat(contactId)}
     >
+      {/*
+        shake-layer: inner wrapper that receives the buzz animation.
+        The outer div keeps position:fixed (can't animate transform on fixed
+        elements when an ancestor has backdrop-filter). This inner div is a
+        normal block element — transform works reliably on it.
+      */}
+      <div className="chat-window__shake-layer">
+
       {/* Title bar */}
       <div
         className={`chat-window__titlebar ${isMaximized ? 'chat-window__titlebar--no-drag' : ''}`}
@@ -270,6 +313,8 @@ function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimized
         </div>
 
       </div>
+
+      </div>{/* end chat-window__shake-layer */}
     </div>
   )
 }

@@ -61,6 +61,17 @@ function MessageList({ messages = [], contactName = 'them', onReact }) {
   return (
     <div className="message-list">
       {messages.map((msg) => {
+
+        // ── System message (buzz, nudge, etc.) ──────────────────
+        if (msg.sender === 'system') {
+          return (
+            <div key={msg.id} className="message-row message-row--system animate-slide-in">
+              <p className="message-system">{msg.text}</p>
+            </div>
+          )
+        }
+
+        // ── Regular message ─────────────────────────────────────
         const isMe = msg.sender === 'me'
         const displayName = isMe ? 'xX_You_Xx' : contactName
 

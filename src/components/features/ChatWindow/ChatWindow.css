@@ -34,6 +34,38 @@
   user-select: none;
   box-shadow: var(--glow-cyan-lg);
 }
+
+/* ── Shake layer ─────────────────────────────────────────────
+   Inner wrapper that receives the buzz animation. The outer
+   .chat-window keeps position:fixed untouched — transform on a
+   fixed element is unreliable when any ancestor has backdrop-filter.
+   This inner div is a normal block element: transform always works.
+   ──────────────────────────────────────────────────────────────── */
+.chat-window__shake-layer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes window-buzz {
+  0%   { transform: translate(0,    0)    rotate(0deg);    }
+  10%  { transform: translate(-8px, -4px) rotate(-1.5deg); }
+  20%  { transform: translate( 8px,  4px) rotate( 1.5deg); }
+  30%  { transform: translate(-6px,  3px) rotate(-1deg);   }
+  40%  { transform: translate( 6px, -3px) rotate( 1deg);   }
+  50%  { transform: translate(-4px,  2px) rotate(-0.5deg); }
+  60%  { transform: translate( 4px, -2px) rotate( 0.5deg); }
+  70%  { transform: translate(-2px,  1px) rotate(0deg);    }
+  80%  { transform: translate( 2px, -1px) rotate(0deg);    }
+  90%  { transform: translate(-1px,  0);                   }
+  100% { transform: translate(0,    0);                    }
+}
+
+/* Triggered via DOM ref: parent gets --buzzed, inner layer animates */
+.chat-window--buzzed .chat-window__shake-layer {
+  animation: window-buzz 0.8s ease-in-out;
+}
 .chat-window--maximized {
   width: 100% !important;
   height: 100% !important;

@@ -170,6 +170,11 @@ export function sendTyping(conversationId) {
   send({ type: 'typing', conversationId })
 }
 
+/** Send a buzz (nudge) to the other participant of a conversation. */
+export function sendBuzz(conversationId) {
+  send({ type: 'buzz', conversationId })
+}
+
 /** Broadcast the current user's presence status. */
 export function updateStatus(status) {
   lastStatus = status   // persist so it survives reconnects

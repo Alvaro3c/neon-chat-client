@@ -41,6 +41,7 @@ export function ChatProvider({ children }) {
   // Live data from the WebSocket
   const [contactStatuses, setContactStatuses] = useState({}) // { [uid]: { status, mood } }
   const [typingStatus, setTypingStatus]       = useState({}) // { [conversationId]: boolean }
+  const [buzzSignals, setBuzzSignals]         = useState({}) // { [conversationId]: number } — increments on each incoming buzz
   const typingTimers = useRef({})
 
   // ── Firestore subscription ────────────────────────────────────
@@ -142,6 +143,28 @@ export function ChatProvider({ children }) {
         typingTimers.current[event.conversationId] = setTimeout(() => {
           setTypingStatus((prev) => ({ ...prev, [event.conversationId]: false }))
         }, 2_000)
+        break
+      }
+
+      case 'buzz': {
+        // Increment signal so ChatWindow's useEffect fires even on repeated buzzes
+        setBuzzSignals((prev) => ({
+          ...prev,
+          [event.conversationId]: (prev[event.conversationId] ?? 0) + 1,
+        }))
+        // Add a system message so the buzz is visible in the chat history
+        setMessages((prev) => ({
+          ...prev,
+          [event.conversationId]: [
+            ...(prev[event.conversationId] ?? []),
+            {
+              id:        `buzz-${Date.now()}-${Math.random()}`,
+              text:      `${event.senderName || 'Your friend'} sent you a buzz! 〰️`,
+              sender:    'system',
+              timestamp: new Date(),
+            },
+          ],
+        }))
         break
       }
 
@@ -248,6 +271,27 @@ export function ChatProvider({ children }) {
     setActiveContactId(contactId)
   }, [])
 
+  // ── Local system messages ──────────────────────────────────
+  /**
+   * Inject a system message directly into the local messages state
+   * without going through the WebSocket.  Used for buzz confirmations,
+   * future nudges, etc.
+   */
+  const addSystemMessage = useCallback((conversationId, text) => {
+    setMessages((prev) => ({
+      ...prev,
+      [conversationId]: [
+        ...(prev[conversationId] ?? []),
+        {
+          id:        `system-${Date.now()}-${Math.random()}`,
+          text,
+          sender:    'system',
+          timestamp: new Date(),
+        },
+      ],
+    }))
+  }, [])
+
   // ── Messaging (delegated to WebSocket) ────────────────────
   /**
    * Send a message via the WebSocket.
@@ -298,6 +342,8 @@ export function ChatProvider({ children }) {
     activeContactId,
     contactStatuses,
     typingStatus,
+    buzzSignals,
+    addSystemMessage,
     openChat,
     closeChat,
     focusChat,

@@ -153,6 +153,23 @@ export function ChatProvider({ children }) {
         break
       }
 
+      case 'contact_profile': {
+        // A contact changed their nickname or photo — update the buddy list
+        // in real-time so friends see the new name without reloading.
+        setContacts((prev) =>
+          prev.map((c) =>
+            c.uid === event.uid
+              ? {
+                  ...c,
+                  name:     event.displayName || c.name,
+                  photoURL: event.photoURL    || c.photoURL,
+                }
+              : c
+          )
+        )
+        break
+      }
+
       default:
         break
     }

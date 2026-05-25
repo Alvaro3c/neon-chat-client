@@ -3,7 +3,7 @@ import Avatar from '../../shared/Avatar'
 import Input from '../../shared/Input'
 import { useChat } from '../../../context/ChatContext'
 import useDragAndDrop from '../../../hooks/useDragAndDrop'
-import { auth, getUserByEmail, createConversation } from '../../../services/firebase'
+import { auth, getUserByEmail, createConversation, updateUserDisplayName } from '../../../services/firebase'
 import * as chatSocket from '../../../services/chatSocket'
 import './ConversationSidebar.css'
 
@@ -118,8 +118,26 @@ function ConversationSidebar() {
 
   // ── Name editing ──────────────────────────────────────────
   function commitName() {
-    setUserName(tempName.trim() || userName)
+    const next = tempName.trim() || userName
     setEditingName(false)
+
+    // Only propagate if the name actually changed
+    if (next === userName) return
+
+    setUserName(next)
+
+    // 1. Persist to Firestore so the new nick survives reconnects and is
+    //    visible to friends who are currently offline.
+    const uid = auth.currentUser?.uid
+    if (uid) {
+      updateUserDisplayName(uid, next).catch((err) =>
+        console.error('[ConversationSidebar] Failed to save display name:', err)
+      )
+    }
+
+    // 2. Broadcast to all currently connected friends via WebSocket so
+    //    they see the change immediately without reloading.
+    chatSocket.updateDisplayName(next)
   }
   function handleNameKey(e) {
     if (e.key === 'Enter') commitName()

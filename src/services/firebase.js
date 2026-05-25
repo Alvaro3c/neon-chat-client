@@ -95,16 +95,42 @@ export async function signOut() {
 
 /**
  * Save (or refresh) a user's profile in Firestore.
- * Uses setDoc with merge:true so it won't overwrite existing fields.
+ *
+ * First login  → creates the full document including `name` (Google display name).
+ * Re-login     → only updates `email` and `photoURL` so a custom nickname the
+ *                user may have set via the sidebar is never overwritten.
  */
 async function saveUserProfile(user) {
-  const ref = doc(db, 'users', user.uid)
-  await setDoc(ref, {
-    name:     user.displayName,
-    email:    user.email,
-    photoURL: user.photoURL,
-    createdAt: serverTimestamp(),
-  }, { merge: true })
+  const ref  = doc(db, 'users', user.uid)
+  const snap = await getDoc(ref)
+
+  if (!snap.exists()) {
+    // Brand-new user: create the full document.
+    await setDoc(ref, {
+      name:      user.displayName,
+      email:     user.email,
+      photoURL:  user.photoURL,
+      createdAt: serverTimestamp(),
+    })
+  } else {
+    // Returning user: keep existing `name` (may be a custom nick) and only
+    // refresh the fields that are always controlled by Google Auth.
+    await updateDoc(ref, {
+      email:    user.email,
+      photoURL: user.photoURL,
+    })
+  }
+}
+
+/**
+ * Update the display name (custom nickname) for a user in Firestore.
+ * Called when the user edits their name in the sidebar footer.
+ * @param {string} uid
+ * @param {string} name
+ */
+export async function updateUserDisplayName(uid, name) {
+  const ref = doc(db, 'users', uid)
+  await updateDoc(ref, { name })
 }
 
 /**

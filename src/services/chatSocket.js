@@ -29,15 +29,16 @@ let retryTimer       = null
 let intentionalClose = false
 
 /**
- * Last known presence values.
+ * Last known presence and profile values.
  * Stored before every send so they can be re-broadcast automatically after
  * a reconnect — the server forgets them when the connection drops.
  * Start as null so we never broadcast if the UI hasn't set them yet.
  *
  * @type {string|null}
  */
-let lastStatus = null
-let lastMood   = null
+let lastStatus      = null
+let lastMood        = null
+let lastDisplayName = null
 
 /** @type {Set<Function>} */
 const listeners = new Set()
@@ -65,10 +66,11 @@ function openSocket(idToken) {
     retryCount = 0
     // First message must be the auth handshake
     socket.send(JSON.stringify({ type: 'auth', token: idToken }))
-    // Re-broadcast the last known presence so friends see the correct state
-    // after the initial connect or any reconnect.
-    if (lastStatus !== null) send({ type: 'status_update', status: lastStatus })
-    if (lastMood   !== null) send({ type: 'mood_update',   mood:   lastMood   })
+    // Re-broadcast the last known presence and profile so friends see the
+    // correct state after the initial connect or any reconnect.
+    if (lastStatus      !== null) send({ type: 'status_update',  status:      lastStatus      })
+    if (lastMood        !== null) send({ type: 'mood_update',    mood:         lastMood        })
+    if (lastDisplayName !== null) send({ type: 'profile_update', displayName: lastDisplayName })
     console.info('[chatSocket] Connected and authenticated')
   })
 
@@ -178,6 +180,16 @@ export function updateStatus(status) {
 export function updateMood(mood) {
   lastMood = mood       // persist so it survives reconnects
   send({ type: 'mood_update', mood })
+}
+
+/**
+ * Broadcast the current user's custom display name (nickname).
+ * Stored so it is re-sent automatically after a reconnect.
+ * @param {string} displayName
+ */
+export function updateDisplayName(displayName) {
+  lastDisplayName = displayName   // persist so it survives reconnects
+  send({ type: 'profile_update', displayName })
 }
 
 /**

@@ -105,7 +105,7 @@ function LoginPage() {
       </main>
 
       <footer className="login__footer">
-        <span>★ xX_DarkMessenger_Xx © 2007 ★ · made with 🖤 and energy drinks</span>
+        <span>★ xX_NeonMessenger_Xx © 2007 ★ · made with 🖤 and energy drinks</span>
       </footer>
     </div>
   )

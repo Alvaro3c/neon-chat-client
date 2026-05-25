@@ -39,7 +39,7 @@ function AppShell() {
         <div className="app__header-inner">
           <div className="app__brand">
             <span className="animate-pulse" aria-hidden="true">💀</span>
-            <h1 className="app__title neon-text-cyan">xX_DarkMessenger_Xx</h1>
+            <h1 className="app__title neon-text-cyan">xX_NeonMessenger_Xx</h1>
             <span className="animate-pulse" aria-hidden="true">💀</span>
           </div>
 

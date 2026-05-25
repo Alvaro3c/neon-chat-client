@@ -198,13 +198,13 @@ function ConversationSidebar() {
       {/* ── Header ─────────────────────────────────────────── */}
       <div className="sidebar__header">
         <div className="sidebar__header-center">
-          <h1 className="sidebar__title">~*Buddy List*~</h1>
+          <h1 className="sidebar__title">Sidekicks</h1>
           <p className="sidebar__online-count">
             {onlineCount === 0
               ? 'no friends online'
               : onlineCount === 1
-              ? '1 friend online'
-              : `${onlineCount} friends online`}
+                ? '1 friend online'
+                : `${onlineCount} friends online`}
           </p>
         </div>
 

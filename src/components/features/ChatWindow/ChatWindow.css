@@ -142,9 +142,10 @@
 }
 
 /* ── Minimized pill ──────────────────────────────────────── */
+/* `bottom` and `left` are set via inline styles computed in ChatWindow.jsx
+   so that multiple pills line up in a row and wrap after every 5th item.  */
 .chat-window--minimized {
   position: fixed;
-  bottom: var(--space-4);
   width: auto;
   height: auto;
   border-radius: var(--radius-full);

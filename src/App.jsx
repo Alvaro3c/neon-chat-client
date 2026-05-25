@@ -29,8 +29,11 @@ function ProtectedRoute({ children }) {
 
 // ── Inner app (needs ChatContext in scope) ───────────────────
 function AppShell() {
-  const { openChats } = useChat()
+  const { openChats, minimizeChat, unminimizeChat } = useChat()
   const { user, signOut } = useAuth()
+
+  // Only the minimized chats, in order — used to assign each pill its column slot
+  const minimizedChats = openChats.filter((c) => c.isMinimized)
 
   return (
     <div className="app">
@@ -87,14 +90,25 @@ function AppShell() {
       </footer>
 
       {/* ── Floating chat windows (rendered over everything) ── */}
-      {openChats.map((chat) => (
-        <ChatWindow
-          key={chat.contactId}
-          contactId={chat.contactId}
-          zIndex={chat.zIndex}
-          initialPosition={chat.position}
-        />
-      ))}
+      {openChats.map((chat) => {
+        // Compute the sequential slot only for minimized pills so they
+        // line up left-to-right without gaps from non-minimized windows.
+        const minimizedIndex = chat.isMinimized
+          ? minimizedChats.findIndex((c) => c.contactId === chat.contactId)
+          : -1
+        return (
+          <ChatWindow
+            key={chat.contactId}
+            contactId={chat.contactId}
+            zIndex={chat.zIndex}
+            initialPosition={chat.position}
+            isMinimized={chat.isMinimized}
+            minimizedIndex={minimizedIndex}
+            onMinimize={() => minimizeChat(chat.contactId)}
+            onUnminimize={() => unminimizeChat(chat.contactId)}
+          />
+        )
+      })}
     </div>
   )
 }

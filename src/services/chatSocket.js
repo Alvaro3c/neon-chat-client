@@ -28,6 +28,17 @@ let retryCount       = 0
 let retryTimer       = null
 let intentionalClose = false
 
+/**
+ * Last known presence values.
+ * Stored before every send so they can be re-broadcast automatically after
+ * a reconnect — the server forgets them when the connection drops.
+ * Start as null so we never broadcast if the UI hasn't set them yet.
+ *
+ * @type {string|null}
+ */
+let lastStatus = null
+let lastMood   = null
+
 /** @type {Set<Function>} */
 const listeners = new Set()
 
@@ -54,6 +65,10 @@ function openSocket(idToken) {
     retryCount = 0
     // First message must be the auth handshake
     socket.send(JSON.stringify({ type: 'auth', token: idToken }))
+    // Re-broadcast the last known presence so friends see the correct state
+    // after the initial connect or any reconnect.
+    if (lastStatus !== null) send({ type: 'status_update', status: lastStatus })
+    if (lastMood   !== null) send({ type: 'mood_update',   mood:   lastMood   })
     console.info('[chatSocket] Connected and authenticated')
   })
 
@@ -155,11 +170,13 @@ export function sendTyping(conversationId) {
 
 /** Broadcast the current user's presence status. */
 export function updateStatus(status) {
+  lastStatus = status   // persist so it survives reconnects
   send({ type: 'status_update', status })
 }
 
 /** Broadcast the current user's mood string. */
 export function updateMood(mood) {
+  lastMood = mood       // persist so it survives reconnects
   send({ type: 'mood_update', mood })
 }
 

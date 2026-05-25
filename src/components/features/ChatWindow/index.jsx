@@ -11,22 +11,35 @@ const IconRestore = () => <span title="Restore">❐</span>
 const IconClose = () => <span title="Close">✕</span>
 const IconSend = () => <span>➤</span>
 
+// How many minimized pills fit per row before wrapping to the next line
+const PILLS_PER_ROW = 5
+// Horizontal slot width per pill (px) — should fit the pill + a small gap
+const PILL_SLOT_W = 175
+// Vertical slot height per pill row (px) — pill height (~44 px) + gap
+const PILL_SLOT_H = 52
+// Distance from the left/bottom viewport edge for the first pill
+const PILL_OFFSET_X = 16
+const PILL_OFFSET_Y = 16
+
 /**
  * ChatWindow
  *
  * A floating, draggable chat window.
  * Reads contact data and messages from ChatContext.
  *
- * @param {string}  contactId
- * @param {number}  zIndex
- * @param {{x,y}}   initialPosition
+ * @param {string}   contactId
+ * @param {number}   zIndex
+ * @param {{x,y}}    initialPosition
+ * @param {boolean}  isMinimized      — controlled by ChatContext via App.jsx
+ * @param {number}   minimizedIndex   — sequential slot index among minimized pills (-1 if not minimized)
+ * @param {Function} onMinimize       — called when the user clicks the minimise button
+ * @param {Function} onUnminimize     — called when the user restores the pill
  */
-function ChatWindow({ contactId, zIndex, initialPosition }) {
+function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimizedIndex, onMinimize, onUnminimize }) {
   const { contacts, messages, closeChat, focusChat, sendMessage, addReaction } = useChat()
   const contact = contacts.find((c) => c.id === contactId)
 
   const [inputValue, setInputValue] = useState('')
-  const [isMinimized, setIsMinimized] = useState(false)
   const [isMaximized, setIsMaximized] = useState(false)
   const [position, setPosition] = useState(initialPosition)
   const [isDragging, setIsDragging] = useState(false)
@@ -79,19 +92,25 @@ function ChatWindow({ contactId, zIndex, initialPosition }) {
 
   // ── Minimized pill ──────────────────────────────────────────
   if (isMinimized) {
-    const pillLeft = 16 + Object.keys(messages).indexOf(contactId) * 180
+    // Calculate the pill's column and row from its sequential index so pills
+    // line up horizontally and wrap to a new row after PILLS_PER_ROW items.
+    const col = minimizedIndex % PILLS_PER_ROW
+    const row = Math.floor(minimizedIndex / PILLS_PER_ROW)
+    const pillLeft   = PILL_OFFSET_X + col * PILL_SLOT_W
+    const pillBottom = PILL_OFFSET_Y + row * PILL_SLOT_H
+
     return (
       <div
         className="chat-window chat-window--minimized animate-fade-in"
-        style={{ zIndex, left: Math.max(16, pillLeft) }}
-        onClick={() => focusChat(contactId)}
+        style={{ zIndex, left: pillLeft, bottom: pillBottom }}
+        onClick={onUnminimize}
       >
         <div className="chat-window__minimized-bar">
           <span style={{ fontSize: 18 }}>{contact.avatar}</span>
           <span className="chat-window__minimized-name">{contact.name}</span>
           <button
             className="chat-window__ctrl-btn"
-            onClick={(e) => { e.stopPropagation(); setIsMinimized(false) }}
+            onClick={(e) => { e.stopPropagation(); onUnminimize() }}
           >
             <IconMaximize />
           </button>
@@ -139,7 +158,7 @@ function ChatWindow({ contactId, zIndex, initialPosition }) {
         <div className="chat-window__controls">
           <button
             className="chat-window__ctrl-btn"
-            onClick={(e) => { e.stopPropagation(); setIsMinimized(true) }}
+            onClick={(e) => { e.stopPropagation(); onMinimize() }}
           >
             <IconMinus />
           </button>

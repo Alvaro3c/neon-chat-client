@@ -174,8 +174,9 @@ export function ChatProvider({ children }) {
       const exists = prev.find((c) => c.contactId === contactId)
       if (exists) {
         setMaxZ((z) => z + 1)
+        // Also unminimize if the chat was minimized when the user clicks it again
         return prev.map((c) =>
-          c.contactId === contactId ? { ...c, zIndex: maxZ + 1 } : c
+          c.contactId === contactId ? { ...c, zIndex: maxZ + 1, isMinimized: false } : c
         )
       }
       const offset = prev.length * 30
@@ -186,7 +187,7 @@ export function ChatProvider({ children }) {
         y: Math.max(8, Math.min(cy + offset, window.innerHeight - 520)),
       }
       setMaxZ((z) => z + 1)
-      return [...prev, { contactId, zIndex: maxZ + 1, position }]
+      return [...prev, { contactId, zIndex: maxZ + 1, position, isMinimized: false }]
     })
     setActiveContactId(contactId)
   }, [maxZ])
@@ -202,6 +203,27 @@ export function ChatProvider({ children }) {
       setOpenChats((prev) =>
         prev.map((c) =>
           c.contactId === contactId ? { ...c, zIndex: next } : c
+        )
+      )
+      return next
+    })
+    setActiveContactId(contactId)
+  }, [])
+
+  /** Minimize a chat window — moves it to the bottom pill bar. */
+  const minimizeChat = useCallback((contactId) => {
+    setOpenChats((prev) =>
+      prev.map((c) => c.contactId === contactId ? { ...c, isMinimized: true } : c)
+    )
+  }, [])
+
+  /** Restore a minimized chat — brings it back to the floating window. */
+  const unminimizeChat = useCallback((contactId) => {
+    setMaxZ((z) => {
+      const next = z + 1
+      setOpenChats((prev) =>
+        prev.map((c) =>
+          c.contactId === contactId ? { ...c, isMinimized: false, zIndex: next } : c
         )
       )
       return next
@@ -262,6 +284,8 @@ export function ChatProvider({ children }) {
     openChat,
     closeChat,
     focusChat,
+    minimizeChat,
+    unminimizeChat,
     sendMessage,
     addReaction,
     acceptRequest,

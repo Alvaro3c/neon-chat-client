@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Avatar from '../../shared/Avatar'
 import Input from '../../shared/Input'
 import { useChat } from '../../../context/ChatContext'
@@ -16,17 +16,28 @@ const THEMES = [
 ]
 
 // ── User status config ────────────────────────────────────────
+//
+// `dot`   — which canonical Avatar dot to show (online | away | busy | offline).
+//           Lets us use unusual status values while keeping the Avatar component
+//           simple (it only needs CSS for the 4 canonical dot states).
+// `color` — colour used for the status label text in the sidebar.
 const USER_STATUSES = [
-  { value: 'online', label: 'Online', color: 'var(--color-status-online)' },
-  { value: 'away', label: 'Away', color: 'var(--color-status-away)' },
-  { value: 'busy', label: 'Busy', color: 'var(--color-status-busy)' },
-  { value: 'sober', label: 'sober JK unless', color: 'var(--color-neon-cyan)' },
-  { value: 'breaking', label: 'Breaking stuff', color: 'var(--color-status-busy)' },
-  { value: 'noregret', label: 'I got no regret right now', color: 'var(--color-neon-cyan)' },
-  { value: 'train', label: 'There is a train', color: 'var(--color-status-away)' },
-  { value: 'misrep', label: 'Misrepresented', color: 'var(--color-text-muted)' },
-  { value: 'scotty', label: "Scotty doesn't know", color: 'var(--color-status-online)' },
+  { value: 'online',   label: 'Online',                    color: 'var(--color-status-online)', dot: 'online'  },
+  { value: 'away',     label: 'Away',                      color: 'var(--color-status-away)',   dot: 'away'    },
+  { value: 'busy',     label: 'Busy',                      color: 'var(--color-status-busy)',   dot: 'busy'    },
+  { value: 'sober',    label: 'sober JK unless',           color: 'var(--color-neon-cyan)',     dot: 'online'  },
+  { value: 'breaking', label: 'Breaking stuff',            color: 'var(--color-status-busy)',   dot: 'busy'    },
+  { value: 'noregret', label: 'I got no regret right now', color: 'var(--color-neon-cyan)',     dot: 'online'  },
+  { value: 'train',    label: 'There is a train',          color: 'var(--color-status-away)',   dot: 'away'    },
+  { value: 'misrep',   label: 'Misrepresented',            color: 'var(--color-text-muted)',    dot: 'offline' },
+  { value: 'scotty',   label: "Scotty doesn't know",       color: 'var(--color-status-online)', dot: 'online'  },
 ]
+
+/** Resolve a status value to its human-readable label, falling back to the raw value. */
+const getStatusLabel = (value) => USER_STATUSES.find((s) => s.value === value)?.label ?? value
+
+/** Resolve a status value to its canonical Avatar dot state (online|away|busy|offline). */
+const getStatusDot = (value) => USER_STATUSES.find((s) => s.value === value)?.dot ?? 'offline'
 
 /**
  * ConversationSidebar
@@ -85,6 +96,16 @@ function ConversationSidebar() {
   const [userStatus, setUserStatus] = useState('online')
   const [statusMenuOpen, setStatusMenuOpen] = useState(false)
   const statusRef = useRef(null)
+
+  // ── Broadcast initial presence on mount ───────────────────
+  // The socket may not be open yet when this runs, but chatSocket stores
+  // these values and re-sends them automatically once the connection is
+  // established (or re-established after a network drop).
+  useEffect(() => {
+    chatSocket.updateStatus(userStatus)
+    chatSocket.updateMood(userMood)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // intentionally runs once — we only need to seed the initial values
 
   // ── Theme switch ──────────────────────────────────────────
   function handleThemeChange(value) {
@@ -184,11 +205,11 @@ function ConversationSidebar() {
   // ── Filtered contacts ─────────────────────────────────────
   const filtered = contacts.filter((c) => {
     const matchName = c.name.toLowerCase().includes(search.toLowerCase())
-    const matchFilter = filter === 'all' || getLiveStatus(c) === 'online'
+    const matchFilter = filter === 'all' || getStatusDot(getLiveStatus(c)) === 'online'
     return matchName && matchFilter
   })
 
-  const onlineCount = contacts.filter((c) => getLiveStatus(c) === 'online').length
+  const onlineCount = contacts.filter((c) => getStatusDot(getLiveStatus(c)) === 'online').length
   const openIds = openChats.map((oc) => oc.contactId)
 
   const currentStatus = USER_STATUSES.find((s) => s.value === userStatus)
@@ -367,14 +388,14 @@ function ConversationSidebar() {
                   <Avatar
                     src={contact.photoURL || undefined}
                     emoji={contact.avatar}
-                    status={liveStatus}
+                    status={getStatusDot(liveStatus)}
                     size="md"
                   />
                   <div className="contact-item__info">
                     <p className="contact-item__name">{contact.name}</p>
                     <p className="contact-item__mood">{liveMood}</p>
-                    <p className={`contact-item__status-label contact-item__status-label--${liveStatus}`}>
-                      {liveStatus}
+                    <p className={`contact-item__status-label contact-item__status-label--${getStatusDot(liveStatus)}`}>
+                      {getStatusLabel(liveStatus)}
                     </p>
                   </div>
                   {isOpen && <span className="contact-item__open-dot" title="Chat open" />}
@@ -391,7 +412,7 @@ function ConversationSidebar() {
         <Avatar
           src={auth.currentUser?.photoURL || undefined}
           emoji="🎧"
-          status={userStatus === 'sober' ? 'online' : userStatus}
+          status={getStatusDot(userStatus)}
           size="md"
         />
 

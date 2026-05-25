@@ -142,9 +142,13 @@ function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimized
   const [isBuzzing, setIsBuzzing]       = useState(false)
   const [isPickerOpen, setIsPickerOpen] = useState(false)
 
-  const dragOffset  = useRef({ x: 0, y: 0 })
-  const windowRef   = useRef(null)
-  const composerRef = useRef(null)
+  const dragOffset      = useRef({ x: 0, y: 0 })
+  const windowRef       = useRef(null)
+  const composerRef     = useRef(null)
+  // Tracks the timestamp of the last sendTyping() call so we throttle to
+  // one event per 1.5 s — the ChatContext auto-clears the indicator after 2 s
+  // of silence, so 1.5 s keeps it alive without spamming the server.
+  const typingThrottleRef = useRef(0)
 
   // Captures the buzz count at mount time so we never replay a buzz that
   // arrived while this window was closed or hadn't been opened yet.
@@ -194,7 +198,21 @@ function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimized
     if (!div) return
 
     // Keep the send button state in sync
-    setIsEmpty(serializeComposer(div).trim() === '')
+    const serialized = serializeComposer(div).trim()
+    setIsEmpty(serialized === '')
+
+    // ── Typing indicator (step 6) ────────────────────────────────
+    // Emit a typing event at most once per 1.5 s while the composer has text.
+    // The backend forwards it to the other participant only; ChatContext
+    // auto-clears the indicator 2 s after the last event — so 1.5 s keeps
+    // the bar visible without any perceptible flicker.
+    if (serialized !== '') {
+      const now = Date.now()
+      if (now - typingThrottleRef.current >= 1_500) {
+        typingThrottleRef.current = now
+        chatSocket.sendTyping(contactId)
+      }
+    }
 
     // ── Shortcode auto-replace (keyboard shortcuts) ─────────────
     // Check whether the text ending at the cursor matches any shortcode.

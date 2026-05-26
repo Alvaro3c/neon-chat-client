@@ -262,3 +262,13 @@ export function onMessage(handler) {
 export function offMessage(handler) {
   listeners.delete(handler)
 }
+
+// ── HMR cleanup (development only) ───────────────────────────────────────────
+// Vite re-evaluates this module on every hot update. Without explicit cleanup
+// the old WebSocket stays open as a zombie, creating a second live connection
+// and causing duplicate messages.
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    disconnect()
+  })
+}

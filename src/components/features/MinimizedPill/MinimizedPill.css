@@ -1,0 +1,70 @@
+/* ── MinimizedPill ───────────────────────────────────────────
+   Compact pill shown at the bottom of the viewport when a
+   ChatWindow is minimized. `left` and `bottom` are set via
+   inline styles computed from the pill's index.
+   ──────────────────────────────────────────────────────────── */
+
+.chat-window--minimized {
+  position: fixed;
+  width: auto;
+  height: auto;
+  border-radius: var(--radius-full);
+  overflow: visible;
+  cursor: pointer;
+}
+
+.chat-window__minimized-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-card);
+  border: 2px solid color-mix(in oklch, var(--color-neon-cyan) 50%, transparent);
+  border-radius: var(--radius-full);
+  box-shadow: var(--glow-panel);
+  transition: box-shadow 0.15s ease;
+}
+
+.chat-window__minimized-bar:hover {
+  box-shadow: var(--glow-cyan-lg);
+}
+
+.chat-window__minimized-name {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  color: var(--color-neon-cyan);
+}
+
+/* ── New-message notification blink ──────────────────────── */
+/* Three chained animations share the same keyframe but with
+   increasing durations, creating a naturally decaying frequency:
+     0 – 2.4 s  → fast   (8 × 0.30 s)
+     2.4 – 5.4 s → medium (4 × 0.75 s)
+     5.4 s – ∞  → slow   (∞ × 2.50 s)
+   Each phase starts exactly when the previous one ends (delay =
+   sum of previous durations), so there are no jumps or flashes. */
+@keyframes pill-notify {
+
+  0%,
+  100% {
+    border-color: color-mix(in oklch, var(--color-neon-cyan) 50%, transparent);
+    box-shadow: var(--glow-panel);
+  }
+
+  50% {
+    border-color: var(--color-neon-cyan);
+    box-shadow:
+      var(--glow-cyan-lg),
+      0 0 28px color-mix(in oklch, var(--color-neon-cyan) 70%, transparent);
+  }
+}
+
+.chat-window--has-notification .chat-window__minimized-bar {
+  animation:
+    pill-notify 0.50s ease-in-out 0s 8,
+    /* fast   — 2.4 s total */
+    pill-notify 0.75s ease-in-out 2.4s 4,
+    /* medium — 3.0 s total */
+    pill-notify 2.50s ease-in-out 5.4s infinite;
+  /* slow   — ∞           */
+}

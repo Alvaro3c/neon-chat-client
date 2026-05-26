@@ -1,0 +1,212 @@
+/* ── ChatBottom ──────────────────────────────────────────────
+   Bottom section of the ChatWindow: toolbar, emoticon picker
+   anchor, composer input row, and typing indicator bar.
+   ──────────────────────────────────────────────────────────── */
+
+.chat-window__bottom {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid color-mix(in oklch, var(--color-neon-cyan) 25%, transparent);
+  background: color-mix(in oklch, var(--color-card) 80%, transparent);
+  flex-shrink: 0;
+  /* Needed so EmoticonPicker (position:absolute; bottom:100%) anchors here */
+  position: relative;
+}
+
+/* ── Toolbar ─────────────────────────────────────────────── */
+.chat-window__toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-bottom: 1px solid color-mix(in oklch, var(--color-neon-cyan) 12%, transparent);
+  width: 100%;
+}
+
+.chat-window__tool-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-family: var(--font-body);
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.chat-window__tool-btn:hover {
+  color: var(--color-neon-cyan);
+  background: color-mix(in oklch, var(--color-neon-cyan) 10%, transparent);
+}
+
+/* Active state — emoticons button highlighted while the picker is open */
+.chat-window__tool-btn--active {
+  color: var(--color-neon-cyan);
+  background: color-mix(in oklch, var(--color-neon-cyan) 15%, transparent);
+}
+
+/* Buzz button — gets a pink/magenta accent to stand out */
+.chat-window__tool-btn--buzz {
+  color: color-mix(in oklch, var(--color-neon-cyan) 70%, oklch(0.78 0.18 330));
+}
+
+.chat-window__tool-btn--buzz:hover {
+  color: oklch(0.78 0.18 330);
+  background: color-mix(in oklch, oklch(0.78 0.18 330) 12%, transparent);
+}
+
+/* Buzz shake animation — triggered when isBuzzing = true */
+@keyframes buzz-shake {
+  0%   { transform: translateX(0); }
+  15%  { transform: translateX(-4px) rotate(-2deg); }
+  30%  { transform: translateX(4px)  rotate(2deg); }
+  45%  { transform: translateX(-3px) rotate(-1deg); }
+  60%  { transform: translateX(3px)  rotate(1deg); }
+  75%  { transform: translateX(-2px); }
+  90%  { transform: translateX(2px); }
+  100% { transform: translateX(0); }
+}
+
+.chat-window__tool-btn--buzzing {
+  animation: buzz-shake 0.6s ease;
+  color: oklch(0.78 0.18 330) !important;
+}
+
+/* ── Input row ───────────────────────────────────────────── */
+.chat-window__input-row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  padding: var(--space-2) var(--space-3) var(--space-5);
+}
+
+/* ── Composer (contenteditable) ──────────────────────────── */
+/* Replaces the plain <input> so emoticon <img> nodes can be inline */
+.chat-window__composer {
+  flex: 1;
+  min-height: 55px;
+  max-height: 110px;
+  overflow-y: auto;
+  border-radius: var(--radius-full);
+  padding: var(--space-3) var(--space-5);
+  background: color-mix(in oklch, var(--color-surface, #0a0a0f) 80%, transparent);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  outline: none;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  word-break: break-word;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.chat-window__composer:focus {
+  border-color: color-mix(in oklch, var(--color-neon-cyan) 50%, transparent);
+  box-shadow: var(--glow-cyan);
+}
+
+/* Placeholder via CSS — shown when div is truly empty */
+.chat-window__composer:empty::before {
+  content: attr(data-placeholder);
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+/* Inline emoticon image inside the composer */
+.chat-composer__emoticon {
+  width: 19px;
+  height: 19px;
+  vertical-align: middle;
+  display: inline-block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  margin: 0 1px;
+}
+
+/* ── Send button ─────────────────────────────────────────── */
+.chat-window__send-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 55px;
+  height: 55px;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in oklch, var(--color-neon-cyan) 50%, transparent);
+  color: var(--color-neon-cyan);
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  font-size: 16px;
+}
+
+.chat-window__send-btn:enabled {
+  background: color-mix(in oklch, var(--color-neon-cyan) 15%, transparent);
+  box-shadow: var(--glow-cyan);
+}
+
+.chat-window__send-btn:enabled:hover {
+  background: color-mix(in oklch, var(--color-neon-cyan) 25%, transparent);
+  box-shadow: var(--glow-cyan-lg);
+}
+
+.chat-window__send-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+}
+
+/* ── Typing indicator bar ────────────────────────────────── */
+.chat-window__typing-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: 22px; /* fixed height — no layout shift */
+  padding: 0 var(--space-4);
+  font-size: 12px;
+  font-family: var(--font-body);
+  font-style: italic;
+  color: var(--color-text-muted);
+  border-top: 1px solid color-mix(in oklch, var(--color-neon-cyan) 10%, transparent);
+}
+
+.chat-window__typing-text {
+  color: color-mix(in oklch, var(--color-neon-cyan) 65%, var(--color-text-muted));
+}
+
+/* Three bouncing dots */
+.chat-window__typing-dots {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.chat-window__typing-dots span {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: color-mix(in oklch, var(--color-neon-cyan) 60%, transparent);
+  animation: typing-dot-bounce 1.2s ease-in-out infinite;
+}
+
+.chat-window__typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.chat-window__typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing-dot-bounce {
+
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}

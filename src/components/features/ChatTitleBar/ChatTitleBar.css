@@ -1,0 +1,82 @@
+/* ── ChatTitleBar ────────────────────────────────────────────
+   Title bar for the floating ChatWindow.
+   Includes contact info and window control buttons.
+   ──────────────────────────────────────────────────────────── */
+
+.chat-window__titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  background: linear-gradient(90deg,
+      color-mix(in oklch, var(--color-neon-cyan) 25%, transparent),
+      color-mix(in oklch, var(--color-neon-green) 15%, transparent));
+  border-bottom: 1px solid color-mix(in oklch, var(--color-neon-cyan) 30%, transparent);
+  cursor: grab;
+  flex-shrink: 0;
+}
+
+.chat-window__titlebar--no-drag {
+  cursor: default;
+}
+
+.chat-window__contact {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.chat-window__contact-name {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  color: var(--color-neon-cyan);
+  text-shadow: var(--glow-cyan);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.chat-window__contact-mood {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+/* ── Window controls ─────────────────────────────────────── */
+.chat-window__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
+.chat-window__ctrl-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-md);
+  color: var(--color-neon-cyan);
+  transition: background 0.12s ease;
+  font-size: 14px;
+}
+
+.chat-window__ctrl-btn:hover {
+  background: color-mix(in oklch, var(--color-neon-cyan) 20%, transparent);
+}
+
+.chat-window__ctrl-btn--close {
+  color: oklch(0.72 0.25 25);
+}
+
+.chat-window__ctrl-btn--close:hover {
+  background: color-mix(in oklch, oklch(0.72 0.25 25) 20%, transparent);
+}

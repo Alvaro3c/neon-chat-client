@@ -21,6 +21,26 @@
 
 import { useState, useCallback } from 'react'
 
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+/**
+ * Calculate the initial screen position for the nth chat window.
+ * Centers the first window and offsets each subsequent one by 30 px
+ * so stacked windows are visible.
+ *
+ * @param {number} openCount  Number of windows already open
+ * @returns {{ x: number, y: number }}
+ */
+function computeWindowPosition(openCount) {
+  const offset = openCount * 30
+  const cx = Math.round(window.innerWidth  / 2 - 190)
+  const cy = Math.round(window.innerHeight / 2 - 250)
+  return {
+    x: Math.max(8, Math.min(cx + offset, window.innerWidth  - 396)),
+    y: Math.max(8, Math.min(cy + offset, window.innerHeight - 520)),
+  }
+}
+
 export function useChatWindows() {
   const [openChats, setOpenChats]             = useState([])
   const [maxZ, setMaxZ]                       = useState(100)
@@ -40,13 +60,7 @@ export function useChatWindows() {
           )
         }
 
-        const offset = prev.length * 30
-        const cx = Math.round(window.innerWidth  / 2 - 190)
-        const cy = Math.round(window.innerHeight / 2 - 250)
-        const position = {
-          x: Math.max(8, Math.min(cx + offset, window.innerWidth  - 396)),
-          y: Math.max(8, Math.min(cy + offset, window.innerHeight - 520)),
-        }
+        const position = computeWindowPosition(prev.length)
         return [...prev, { contactId, zIndex: next, position, isMinimized: false }]
       })
 
@@ -105,13 +119,7 @@ export function useChatWindows() {
       const nextZ = z + 1
       setOpenChats((prev) => {
         if (prev.some((c) => c.contactId === contactId)) return prev // already open → leave as-is
-        const offset = prev.length * 30
-        const cx = Math.round(window.innerWidth  / 2 - 190)
-        const cy = Math.round(window.innerHeight / 2 - 250)
-        const position = {
-          x: Math.max(8, Math.min(cx + offset, window.innerWidth  - 396)),
-          y: Math.max(8, Math.min(cy + offset, window.innerHeight - 520)),
-        }
+        const position = computeWindowPosition(prev.length)
         return [...prev, { contactId, zIndex: nextZ, position, isMinimized: true }]
       })
       return nextZ

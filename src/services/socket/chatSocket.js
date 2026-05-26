@@ -26,7 +26,9 @@ const BASE_DELAY  = 1_000   // ms — doubles with every failed attempt
 let socket           = null
 let retryCount       = 0
 let retryTimer       = null
-let intentionalClose = false
+let intentionalClose    = false
+let tokenRefreshTimer   = null
+const TOKEN_REFRESH_INTERVAL = 50 * 60 * 1_000   // 50 min — 10 min margin before the 1 h expiry
 
 /**
  * Last known presence and profile values.
@@ -66,6 +68,20 @@ function openSocket(idToken) {
     retryCount = 0
     // First message must be the auth handshake
     socket.send(JSON.stringify({ type: 'auth', token: idToken }))
+
+    // Proactively refresh the Firebase token every 50 min so the server never
+    // ends up with an expired token on a long-lived stable connection.
+    if (tokenRefreshTimer) clearInterval(tokenRefreshTimer)
+    tokenRefreshTimer = setInterval(async () => {
+      if (!auth.currentUser) return
+      try {
+        const freshToken = await auth.currentUser.getIdToken(true)
+        refreshToken(freshToken)
+      } catch (err) {
+        console.error('[chatSocket] Proactive token refresh failed:', err)
+      }
+    }, TOKEN_REFRESH_INTERVAL)
+
     // Re-broadcast the last known presence and profile so friends see the
     // correct state after the initial connect or any reconnect.
     if (lastStatus      !== null) send({ type: 'status_update',  status:      lastStatus      })
@@ -83,6 +99,10 @@ function openSocket(idToken) {
   })
 
   socket.addEventListener('close', (e) => {
+    if (tokenRefreshTimer) {
+      clearInterval(tokenRefreshTimer)
+      tokenRefreshTimer = null
+    }
     if (intentionalClose) {
       intentionalClose = false
       return
@@ -144,6 +164,10 @@ export function connect(idToken) {
  */
 export function disconnect() {
   intentionalClose = true
+  if (tokenRefreshTimer) {
+    clearInterval(tokenRefreshTimer)
+    tokenRefreshTimer = null
+  }
   if (retryTimer) {
     clearTimeout(retryTimer)
     retryTimer = null

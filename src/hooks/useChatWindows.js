@@ -27,27 +27,34 @@ export function useChatWindows() {
   const [activeContactId, setActiveContactId] = useState(null)
 
   const openChat = useCallback((contactId) => {
-    setOpenChats((prev) => {
-      const exists = prev.find((c) => c.contactId === contactId)
-      if (exists) {
-        setMaxZ((z) => z + 1)
-        // Also unminimize if the chat was minimized when the user clicks it again
-        return prev.map((c) =>
-          c.contactId === contactId ? { ...c, zIndex: maxZ + 1, isMinimized: false } : c
-        )
-      }
-      const offset = prev.length * 30
-      const cx = Math.round(window.innerWidth  / 2 - 190)
-      const cy = Math.round(window.innerHeight / 2 - 250)
-      const position = {
-        x: Math.max(8, Math.min(cx + offset, window.innerWidth  - 396)),
-        y: Math.max(8, Math.min(cy + offset, window.innerHeight - 520)),
-      }
-      setMaxZ((z) => z + 1)
-      return [...prev, { contactId, zIndex: maxZ + 1, position, isMinimized: false }]
+    setMaxZ((z) => {
+      const next = z + 1
+
+      setOpenChats((prev) => {
+        const exists = prev.find((c) => c.contactId === contactId)
+
+        if (exists) {
+          // Also unminimize if the chat was minimized when the user clicks it again
+          return prev.map((c) =>
+            c.contactId === contactId ? { ...c, zIndex: next, isMinimized: false } : c
+          )
+        }
+
+        const offset = prev.length * 30
+        const cx = Math.round(window.innerWidth  / 2 - 190)
+        const cy = Math.round(window.innerHeight / 2 - 250)
+        const position = {
+          x: Math.max(8, Math.min(cx + offset, window.innerWidth  - 396)),
+          y: Math.max(8, Math.min(cy + offset, window.innerHeight - 520)),
+        }
+        return [...prev, { contactId, zIndex: next, position, isMinimized: false }]
+      })
+
+      return next
     })
+
     setActiveContactId(contactId)
-  }, [maxZ])
+  }, [])
 
   const closeChat = useCallback((contactId) => {
     setOpenChats((prev) => prev.filter((c) => c.contactId !== contactId))

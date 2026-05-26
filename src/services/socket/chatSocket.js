@@ -45,11 +45,17 @@ let lastDisplayName = null
 /** @type {Set<Function>} */
 const listeners = new Set()
 
+/** @type {Array<object>} Messages queued while the socket is reconnecting */
+const pendingQueue = []
+
 // ── Internal helpers ──────────────────────────────────────────────────────────
 
 function send(data) {
   if (!socket || socket.readyState !== WebSocket.OPEN) {
-    console.warn('[chatSocket] Cannot send — socket not open:', data.type)
+    // typing is ephemeral — "was typing 30 s ago" would be pure noise after reconnect
+    if (data.type === 'typing') return
+    pendingQueue.push(data)
+    console.warn('[chatSocket] Socket not open — queued:', data.type)
     return
   }
   socket.send(JSON.stringify(data))
@@ -88,6 +94,13 @@ function openSocket(idToken) {
     if (lastMood        !== null) send({ type: 'mood_update',    mood:         lastMood        })
     if (lastDisplayName !== null) send({ type: 'profile_update', displayName: lastDisplayName })
     console.info('[chatSocket] Connected and authenticated')
+
+    // Flush any messages queued while the socket was reconnecting.
+    // Runs after auth + presence so the server has full context first.
+    if (pendingQueue.length > 0) {
+      console.info(`[chatSocket] Flushing ${pendingQueue.length} queued message(s)`)
+      pendingQueue.splice(0).forEach((data) => socket.send(JSON.stringify(data)))
+    }
   })
 
   socket.addEventListener('message', (e) => {
@@ -120,6 +133,10 @@ function openSocket(idToken) {
 function scheduleReconnect() {
   if (retryCount >= MAX_RETRIES) {
     console.error('[chatSocket] Max reconnect attempts reached — giving up')
+    if (pendingQueue.length > 0) {
+      notify({ type: 'send_failed', count: pendingQueue.length })
+      pendingQueue.length = 0
+    }
     return
   }
 
@@ -164,6 +181,7 @@ export function connect(idToken) {
  */
 export function disconnect() {
   intentionalClose = true
+  pendingQueue.length = 0   // queued messages make no sense after logout
   if (tokenRefreshTimer) {
     clearInterval(tokenRefreshTimer)
     tokenRefreshTimer = null

@@ -80,6 +80,30 @@ function ConversationSidebar() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // intentionally runs once — we only need to seed the initial values
 
+  // ── Click-outside: theme menu ─────────────────────────────
+  useEffect(() => {
+    if (!themeMenuOpen) return
+    function handleClickOutside(e) {
+      if (themeRef.current && !themeRef.current.contains(e.target)) {
+        setThemeMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [themeMenuOpen])
+
+  // ── Click-outside: status menu ────────────────────────────
+  useEffect(() => {
+    if (!statusMenuOpen) return
+    function handleClickOutside(e) {
+      if (statusRef.current && !statusRef.current.contains(e.target)) {
+        setStatusMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [statusMenuOpen])
+
   // ── Theme switch ──────────────────────────────────────────
   function handleThemeChange(value) {
     setTheme(value)
@@ -187,10 +211,6 @@ function ConversationSidebar() {
   async function handleAcceptRequest(reqId) {
     await acceptRequest(reqId)
     setFilter('all')
-  }
-
-  async function handleDeclineRequest(reqId) {
-    await declineRequest(reqId)
   }
 
   // ── Filtered contacts ─────────────────────────────────────
@@ -341,7 +361,7 @@ function ConversationSidebar() {
                   </button>
                   <button
                     className="request-item__decline"
-                    onClick={() => handleDeclineRequest(req.id)}
+                    onClick={() => declineRequest(req.id)}
                     title="Decline"
                   >
                     ✕

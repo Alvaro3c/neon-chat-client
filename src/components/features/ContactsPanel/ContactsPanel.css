@@ -1,0 +1,17 @@
+/* ── ContactsPanel ───────────────────────────────────────────
+   Outer container only. Each subcomponent owns its own styles.
+   ──────────────────────────────────────────────────────────── */
+
+.sidebar {
+  width: 80vw;
+  /* fills available body height minus top hint + gaps + footer */
+  max-height: calc(100vh - 130px);
+  background: var(--color-card);
+  border: 2px solid color-mix(in oklch, var(--color-neon-cyan) 30%, transparent);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--glow-panel);
+  flex-shrink: 0;
+}

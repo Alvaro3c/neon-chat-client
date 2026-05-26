@@ -1,0 +1,98 @@
+/* ── PanelHeader ─────────────────────────────────────────────
+   Top bar: title, online count, theme switcher dropdown.
+   ──────────────────────────────────────────────────────────── */
+
+.sidebar__header-center {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar__header {
+  padding: var(--space-3) var(--space-4);
+  background: linear-gradient(135deg,
+      color-mix(in oklch, var(--color-neon-cyan) 15%, transparent),
+      color-mix(in oklch, var(--color-neon-green) 8%, transparent));
+  border-bottom: 2px solid color-mix(in oklch, var(--color-neon-cyan) 25%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.sidebar__title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  color: var(--color-neon-cyan);
+  text-shadow: var(--glow-cyan);
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.sidebar__online-count {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin-top: 2px;
+  text-align: center;
+}
+
+/* Theme switcher button */
+.sidebar__theme-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in oklch, var(--color-neon-cyan) 40%, transparent);
+  color: var(--color-neon-cyan);
+  font-size: 16px;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.sidebar__theme-btn:hover {
+  background: color-mix(in oklch, var(--color-neon-cyan) 15%, transparent);
+  box-shadow: var(--glow-cyan);
+}
+
+/* Theme dropdown */
+.sidebar__theme-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: var(--color-card);
+  border: 2px solid color-mix(in oklch, var(--color-neon-cyan) 50%, transparent);
+  border-radius: var(--radius-lg);
+  padding: var(--space-1);
+  box-shadow: var(--glow-panel);
+  z-index: 50;
+  min-width: 130px;
+  animation: fade-in 0.1s ease-out;
+}
+
+.sidebar__theme-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  transition: background 0.1s ease;
+}
+
+.sidebar__theme-option:hover,
+.sidebar__theme-option--active {
+  background: color-mix(in oklch, var(--color-neon-cyan) 12%, transparent);
+}
+
+.sidebar__theme-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}

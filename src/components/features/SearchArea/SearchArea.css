@@ -1,0 +1,149 @@
+/* ── SearchArea ──────────────────────────────────────────────
+   Search input, add-buddy form, and filter tabs.
+   ──────────────────────────────────────────────────────────── */
+
+.sidebar__search-area {
+  padding: var(--space-3);
+  border-bottom: 1px solid color-mix(in oklch, var(--color-neon-cyan) 15%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+/* ── Filter tabs ─────────────────────────────────────────── */
+.sidebar__filter-row {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.sidebar__filter-btn {
+  flex: 1;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  transition: all 0.15s ease;
+}
+
+.sidebar__filter-btn:hover {
+  border-color: color-mix(in oklch, var(--color-neon-cyan) 50%, transparent);
+}
+
+.sidebar__filter-btn--active-all {
+  background: color-mix(in oklch, var(--color-neon-cyan) 18%, transparent);
+  border-color: var(--color-neon-cyan);
+  color: var(--color-neon-cyan);
+  box-shadow: 0 0 8px color-mix(in oklch, var(--color-neon-cyan) 25%, transparent);
+}
+
+.sidebar__filter-btn--active-online {
+  background: color-mix(in oklch, var(--color-neon-green) 18%, transparent);
+  border-color: var(--color-neon-green);
+  color: var(--color-neon-green);
+  box-shadow: 0 0 8px color-mix(in oklch, var(--color-neon-green) 25%, transparent);
+}
+
+.sidebar__filter-btn--active-requests {
+  background: color-mix(in oklch, oklch(0.65 0.22 350) 15%, transparent);
+  border-color: oklch(0.65 0.22 350);
+  color: oklch(0.65 0.22 350);
+  box-shadow: 0 0 8px color-mix(in oklch, oklch(0.65 0.22 350) 25%, transparent);
+}
+
+/* Badge on Requests tab */
+.sidebar__filter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  margin-left: var(--space-1);
+  border-radius: var(--radius-full);
+  background: oklch(0.65 0.22 350);
+  color: oklch(0.12 0.02 350);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+/* ── New Conversation form ───────────────────────────────── */
+.sidebar__new-conv-btn {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px dashed color-mix(in oklch, var(--color-neon-cyan) 50%, transparent);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: color-mix(in oklch, var(--color-neon-cyan) 70%, transparent);
+  transition: all 0.15s ease;
+  letter-spacing: 0.04em;
+}
+
+.sidebar__new-conv-btn:hover {
+  border-color: var(--color-neon-cyan);
+  color: var(--color-neon-cyan);
+  background: color-mix(in oklch, var(--color-neon-cyan) 8%, transparent);
+  box-shadow: 0 0 10px color-mix(in oklch, var(--color-neon-cyan) 20%, transparent);
+}
+
+.sidebar__new-conv-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.sidebar__new-conv-input {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in oklch, var(--color-neon-cyan) 50%, transparent);
+  background: var(--color-input-bg);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sidebar__new-conv-input::placeholder {
+  color: color-mix(in oklch, var(--color-text-muted) 60%, transparent);
+  font-style: italic;
+}
+
+.sidebar__new-conv-input:focus {
+  border-color: var(--color-neon-cyan);
+  box-shadow: 0 0 8px color-mix(in oklch, var(--color-neon-cyan) 30%, transparent);
+}
+
+.sidebar__new-conv-cancel {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in oklch, var(--color-text-muted) 40%, transparent);
+  font-size: 10px;
+  color: var(--color-text-muted);
+  transition: all 0.12s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar__new-conv-cancel:hover {
+  border-color: oklch(0.65 0.22 25);
+  color: oklch(0.65 0.22 25);
+  background: color-mix(in oklch, oklch(0.65 0.22 25) 10%, transparent);
+}
+
+.sidebar__new-conv-error {
+  width: 100%;
+  margin-top: 4px;
+  font-size: 11px;
+  color: oklch(0.65 0.22 25);
+}

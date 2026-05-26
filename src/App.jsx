@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { ChatProvider, useChat } from './context/ChatContext'
 import { AuthProvider } from './context/AuthContext'
 import useAuth from './hooks/useAuth'
-import ConversationSidebar from './components/features/ConversationSidebar'
+import ContactsPanel from './components/features/ContactsPanel'
 import ChatWindow from './components/features/ChatWindow'
 import LoginToast from './components/shared/LoginToast'
 import LoginPage from './pages/Login'
@@ -78,7 +78,7 @@ function AppShell() {
 
       {/* ── Body — dark backdrop with centered buddy list ────── */}
       <div className="app__body">
-        <ConversationSidebar />
+        <ContactsPanel />
       </div>
 
       {/* ── Footer — slim status bar ─────────────────────────── */}

@@ -1,0 +1,131 @@
+/* ── ProfileFooter ───────────────────────────────────────────
+   Bottom bar: user avatar, editable nickname, mood, status picker.
+   ──────────────────────────────────────────────────────────── */
+
+.sidebar__footer {
+  padding: var(--space-3) var(--space-4);
+  border-top: 2px solid color-mix(in oklch, var(--color-neon-cyan) 25%, transparent);
+  background: linear-gradient(135deg,
+      color-mix(in oklch, var(--color-neon-green) 8%, transparent),
+      color-mix(in oklch, var(--color-neon-cyan) 10%, transparent));
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.sidebar__footer-info {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Inline editable fields ──────────────────────────────── */
+.sidebar__editable {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  color: var(--color-neon-green);
+  text-shadow: var(--glow-green);
+  cursor: pointer;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.sidebar__editable:hover {
+  text-shadow: var(--glow-green), 0 0 20px var(--color-neon-green);
+}
+
+.sidebar__editable-input {
+  background: var(--color-input-bg);
+  border: 1px solid color-mix(in oklch, var(--color-neon-green) 60%, transparent);
+  border-radius: var(--radius-sm);
+  padding: 2px var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  color: var(--color-neon-green);
+  width: 100%;
+  outline: none;
+  box-shadow: 0 0 8px color-mix(in oklch, var(--color-neon-green) 30%, transparent);
+}
+
+.sidebar__status-text {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  font-style: italic;
+  cursor: pointer;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
+  margin-top: 2px;
+  line-height: 1.6;
+  padding: 2px 0;
+}
+
+.sidebar__status-text:hover {
+  color: var(--color-neon-cyan);
+}
+
+.sidebar__status-input {
+  background: var(--color-input-bg);
+  border: 1px solid color-mix(in oklch, var(--color-text-muted) 50%, transparent);
+  border-radius: var(--radius-sm);
+  padding: 2px var(--space-2);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  font-style: italic;
+  width: 100%;
+  outline: none;
+}
+
+/* ── Online status selector ──────────────────────────────── */
+.sidebar__online-status-btn {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+  flex-shrink: 0;
+  white-space: nowrap;
+  text-shadow: 0 0 8px currentColor, 0 0 18px color-mix(in oklch, currentColor 50%, transparent);
+}
+
+.sidebar__online-status-btn:hover {
+  filter: brightness(1.25);
+}
+
+.sidebar__status-dropdown {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  right: 0;
+  background: var(--color-card);
+  border: 2px solid color-mix(in oklch, var(--color-neon-cyan) 50%, transparent);
+  border-radius: var(--radius-lg);
+  padding: var(--space-1);
+  box-shadow: var(--glow-panel);
+  z-index: 50;
+  min-width: 140px;
+  animation: fade-in 0.1s ease-out;
+}
+
+.sidebar__status-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  transition: background 0.1s ease;
+}
+
+.sidebar__status-option:hover,
+.sidebar__status-option--active {
+  background: color-mix(in oklch, var(--color-neon-cyan) 12%, transparent);
+}

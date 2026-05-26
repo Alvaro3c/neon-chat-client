@@ -3,41 +3,14 @@ import Avatar from '../../shared/Avatar'
 import Input from '../../shared/Input'
 import { useChat } from '../../../context/ChatContext'
 import useDragAndDrop from '../../../hooks/useDragAndDrop'
-import { auth, getUserByEmail, createConversation, updateUserDisplayName } from '../../../services/firebase'
-import * as chatSocket from '../../../services/chatSocket'
+import { auth } from '../../../services/firebase/auth'
+import { getUserByEmail, updateUserDisplayName } from '../../../services/firebase/users'
+import { createConversation } from '../../../services/firebase/conversations'
+import * as chatSocket from '../../../services/socket/chatSocket'
+import { THEMES } from '../../../constants/themes'
+import { USER_STATUSES, getStatusLabel, getStatusDot } from '../../../constants/statuses'
 import './ConversationSidebar.css'
 
-// ── Theme config ─────────────────────────────────────────────
-const THEMES = [
-  { value: 'cyan', label: 'Cyan', dot: 'oklch(0.85 0.20 190)' },
-  { value: 'orange', label: 'Orange', dot: 'oklch(0.80 0.20 55)' },
-  { value: 'purple', label: 'Purple', dot: 'oklch(0.60 0.22 290)' },
-  { value: 'green', label: 'Green', dot: 'oklch(0.55 0.20 145)' },
-]
-
-// ── User status config ────────────────────────────────────────
-//
-// `dot`   — which canonical Avatar dot to show (online | away | busy | offline).
-//           Lets us use unusual status values while keeping the Avatar component
-//           simple (it only needs CSS for the 4 canonical dot states).
-// `color` — colour used for the status label text in the sidebar.
-const USER_STATUSES = [
-  { value: 'online', label: 'Online', color: 'var(--color-status-online)', dot: 'online' },
-  { value: 'away', label: 'Away', color: 'var(--color-status-away)', dot: 'away' },
-  { value: 'busy', label: 'Busy', color: 'var(--color-status-busy)', dot: 'busy' },
-  { value: 'sober', label: 'sober JK unless', color: 'var(--color-neon-cyan)', dot: 'online' },
-  { value: 'breaking', label: 'Breaking stuff', color: 'var(--color-status-busy)', dot: 'busy' },
-  { value: 'noregret', label: 'I got no regret right now', color: 'var(--color-neon-cyan)', dot: 'online' },
-  { value: 'train', label: 'There is a train', color: 'var(--color-status-away)', dot: 'away' },
-  { value: 'misrep', label: 'Misrepresented', color: 'var(--color-text-muted)', dot: 'offline' },
-  { value: 'scotty', label: "Scotty doesn't know", color: 'var(--color-status-online)', dot: 'online' },
-]
-
-/** Resolve a status value to its human-readable label, falling back to the raw value. */
-const getStatusLabel = (value) => USER_STATUSES.find((s) => s.value === value)?.label ?? value
-
-/** Resolve a status value to its canonical Avatar dot state (online|away|busy|offline). */
-const getStatusDot = (value) => USER_STATUSES.find((s) => s.value === value)?.dot ?? 'offline'
 
 /**
  * ConversationSidebar

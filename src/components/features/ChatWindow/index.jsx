@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import MessageList from '../MessageList'
 import EmoticonPicker from '../EmoticonPicker'
 import { useChat } from '../../../context/ChatContext'
-import * as chatSocket from '../../../services/chatSocket'
+import * as chatSocket from '../../../services/socket/chatSocket'
 import { EMOTICONS_SORTED, getEmoticonSrc } from '../../../utils/emoticons'
 import './ChatWindow.css'
 

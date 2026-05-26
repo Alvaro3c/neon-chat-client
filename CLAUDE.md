@@ -1,22 +1,11 @@
 # CLAUDE.md — Chat App MVP
 
-## Visual Reference
-Use this repository **only as a reference for design and features**:
-👉 [INSERT V0 REPO URL HERE]
-
-- Do not copy any source code
-- Use it to understand the UI structure, screens, and user flows
-- Completely ignore TypeScript, Tailwind, and any repo-specific libraries
-
----
-
 ## Tech Stack
 
 - **Framework**: React with JSX
 - **Styles**: Plain CSS (one `.css` file per component, no Tailwind, no CSS-in-JS)
 - **Language**: JavaScript (no TypeScript)
 - **Authentication**: Firebase Authentication (Google Auth)
-- **Real-time**: not included in this phase — backend will be added later
 - **Drag and drop**: native HTML5 Drag and Drop API (no external libraries)
 - **No database**: messages are ephemeral, nothing is persisted
 
@@ -86,11 +75,8 @@ src/
 ## What this MVP does NOT include
 
 - Message history (no database)
-- Real-time backend (added in a later phase)
-- Push notifications
 - Multiple rooms or channels
 - User roles or moderation
-
 ---
 
 ## Notes for Claude Code

@@ -4,8 +4,8 @@ import {
   signInWithGoogle,
   signOut,
   getIdToken,
-} from '../services/firebase'
-import * as chatSocket from '../services/chatSocket'
+} from '../services/firebase/auth'
+import * as chatSocket from '../services/socket/chatSocket'
 
 export const AuthContext = createContext(null)
 

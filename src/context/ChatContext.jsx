@@ -1,12 +1,12 @@
 import { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react'
-import * as chatSocket from '../services/chatSocket'
+import * as chatSocket from '../services/socket/chatSocket'
+import { auth } from '../services/firebase/auth'
+import { getUserById } from '../services/firebase/users'
 import {
-  auth,
   subscribeToConversations,
-  getUserById,
   acceptConversation,
   declineConversation,
-} from '../services/firebase'
+} from '../services/firebase/conversations'
 
 // ── Login-sound singleton ─────────────────────────────────────
 // Reuse a single Audio instance to avoid overlapping sounds.

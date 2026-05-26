@@ -1,5 +1,5 @@
 /**
- * services/chatSocket.js
+ * services/socket/chatSocket.js
  *
  * Singleton WebSocket client for the Neon-Chat backend.
  *
@@ -14,7 +14,7 @@
  * Before each reconnect a fresh Firebase ID token is fetched.
  */
 
-import { auth } from './firebase'
+import { auth } from '../firebase/app'
 
 const WS_URL      = import.meta.env.VITE_WS_URL
 const MAX_RETRIES = 5

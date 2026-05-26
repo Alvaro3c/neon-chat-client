@@ -14,6 +14,17 @@
 import { useState, useCallback } from 'react'
 import { playLoginSound } from './useSounds'
 
+const EXIT_ANIMATION_MS = 350
+
+function startToastExit(id, setLoginToasts) {
+  setLoginToasts((prev) =>
+    prev.map((t) => (t.id === id ? { ...t, exiting: true } : t))
+  )
+  setTimeout(() => {
+    setLoginToasts((prev) => prev.filter((t) => t.id !== id))
+  }, EXIT_ANIMATION_MS)
+}
+
 export function useLoginToasts() {
   const [loginToasts, setLoginToasts] = useState([]) // [{ id, name, exiting }]
 
@@ -25,23 +36,13 @@ export function useLoginToasts() {
 
     // Begin exit animation after 7 s, then remove from DOM at 7.35 s
     setTimeout(() => {
-      setLoginToasts((prev) =>
-        prev.map((t) => (t.id === id ? { ...t, exiting: true } : t))
-      )
-      setTimeout(() => {
-        setLoginToasts((prev) => prev.filter((t) => t.id !== id))
-      }, 350)
+      startToastExit(id, setLoginToasts)
     }, 7_000)
   }, [])
 
   /** Dismiss a toast immediately (called on click). */
   const dismissLoginToast = useCallback((id) => {
-    setLoginToasts((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, exiting: true } : t))
-    )
-    setTimeout(() => {
-      setLoginToasts((prev) => prev.filter((t) => t.id !== id))
-    }, 350)
+    startToastExit(id, setLoginToasts)
   }, [])
 
   return { loginToasts, addLoginToast, dismissLoginToast }

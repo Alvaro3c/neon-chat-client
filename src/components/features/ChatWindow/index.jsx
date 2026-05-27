@@ -80,17 +80,13 @@ function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimized
     if (current <= lastSeenBuzzRef.current) return
     lastSeenBuzzRef.current = current
 
-    const el = windowRef.current
-    if (el) {
-      clearTimeout(buzzTimerRef.current)     // cancel any in-flight timer first
-      el.classList.remove('chat-window--buzzed')
-      void el.offsetWidth                    // force reflow → animation restarts
-      el.classList.add('chat-window--buzzed')
-      buzzTimerRef.current = setTimeout(
-        () => el.classList.remove('chat-window--buzzed'),
-        820
-      )
-    }
+    clearTimeout(buzzTimerRef.current)
+    setIsBuzzing(false)                          // reset → React removes the class
+    requestAnimationFrame(() => {                // wait for React to commit false to DOM
+      setIsBuzzing(true)                         // re-add class → animation restarts
+      buzzTimerRef.current = setTimeout(() => setIsBuzzing(false), 820)
+    })
+
     playBuzzSound() // only the receiver hears it
 
     return () => clearTimeout(buzzTimerRef.current)
@@ -114,7 +110,7 @@ function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimized
   // ── Toolbar handlers ──────────────────────────────────────
   function handleBuzz() {
     setIsBuzzing(true)
-    setTimeout(() => setIsBuzzing(false), 600)
+    setTimeout(() => setIsBuzzing(false), 820)
     chatSocket.sendBuzz(contactId)
     addSystemMessage(contactId, `You sent ${contact?.name ?? 'them'} a buzz! 〰️`)
   }
@@ -156,6 +152,7 @@ function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimized
         'animate-fade-in',
         isDragging  ? 'chat-window--dragging'  : '',
         isMaximized ? 'chat-window--maximized' : '',
+        isBuzzing   ? 'chat-window--buzzed'    : '',
       ].filter(Boolean).join(' ')}
       style={{
         zIndex,

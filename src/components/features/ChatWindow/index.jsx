@@ -34,9 +34,16 @@ function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimized
   const {
     contacts, messages, closeChat, focusChat, sendMessage,
     addReaction, typingStatus, buzzSignals, newMessageSignals, addSystemMessage,
+    contactStatuses,
   } = useChat()
 
   const contact = contacts.find((c) => c.id === contactId)
+
+  // Merge live mood from socket events (contactStatuses is keyed by uid, not id)
+  const liveStatus      = contact ? contactStatuses[contact.uid] : null
+  const enrichedContact = contact
+    ? { ...contact, mood: liveStatus?.mood ?? contact.mood }
+    : contact
 
   const [isMaximized,  setIsMaximized]  = useState(false)
   const [isBuzzing,    setIsBuzzing]    = useState(false)
@@ -163,7 +170,7 @@ function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimized
       <div className="chat-window__shake-layer">
 
         <ChatTitleBar
-          contact={contact}
+          contact={enrichedContact}
           isMaximized={isMaximized}
           onMouseDown={handleTitleBarMouseDown}
           onMinimize={onMinimize}

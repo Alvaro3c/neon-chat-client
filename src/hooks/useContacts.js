@@ -9,9 +9,14 @@
  *  - contacts    — active conversations mapped to contact objects
  *  - setContacts — for drag-to-reorder and real-time profile updates
  *  - requests    — pending conversations where the current user is the recipient
+ *
+ * Race-condition safety: Firestore can emit multiple snapshots in quick
+ * succession. A call counter (callCounterRef) ensures that only the result
+ * of the LATEST snapshot callback is committed to state — slower, older
+ * Promise.all resolutions are silently discarded.
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { auth } from '../services/firebase/auth'
 import { getUserById } from '../services/firebase/users'
 import { subscribeToConversations } from '../services/firebase/conversations'
@@ -19,6 +24,9 @@ import { subscribeToConversations } from '../services/firebase/conversations'
 export function useContacts() {
   const [contacts, setContacts] = useState([])
   const [requests, setRequests] = useState([])
+
+  /** Tracks the invocation count of the snapshot callback. */
+  const callCounterRef = useRef(0)
 
   useEffect(() => {
     const currentUser = auth.currentUser
@@ -31,6 +39,7 @@ export function useContacts() {
      * from the /users collection and return a contact-shaped object.
      * The contact's `id` field equals the Firestore conversation document
      * ID — this is what gets passed as `conversationId` when sending messages.
+     * Used for both active contacts and pending requests.
      */
     async function buildContact(conv) {
       const otherUid = conv.participants.find((p) => p !== myUid)
@@ -48,33 +57,34 @@ export function useContacts() {
     }
 
     const unsub = subscribeToConversations(myUid, async (conversations) => {
+      // Stamp this invocation; if a newer snapshot arrives while we await,
+      // thisCall will no longer match callCounterRef.current and we bail out.
+      callCounterRef.current += 1
+      const thisCall = callCounterRef.current
+
       const activeConvs  = conversations.filter((c) => c.status === 'active')
       const pendingConvs = conversations.filter(
         (c) => c.status === 'pending' && c.initiatedBy !== myUid,
       )
 
-      const newContacts = await Promise.all(activeConvs.map(buildContact))
+      // Resolve both lists in parallel — single await, single render
+      const [newContacts, newRequests] = await Promise.all([
+        Promise.all(activeConvs.map(buildContact)),
+        Promise.all(pendingConvs.map(buildContact)),
+      ])
 
-      const newRequests = await Promise.all(
-        pendingConvs.map(async (conv) => {
-          const otherUid = conv.participants.find((p) => p !== myUid)
-          const profile  = await getUserById(otherUid)
-          return {
-            id:       conv.id,
-            uid:      otherUid,
-            name:     profile?.name  || profile?.email || 'Unknown',
-            email:    profile?.email || '',
-            avatar:   '👤',
-            photoURL: profile?.photoURL || '',
-          }
-        }),
-      )
+      // Discard stale results if a newer snapshot has already started
+      if (thisCall !== callCounterRef.current) return
 
       setContacts(newContacts)
       setRequests(newRequests)
     })
 
-    return unsub
+    return () => {
+      // Invalidate any in-flight Promise.all before tearing down the listener
+      callCounterRef.current = 0
+      unsub()
+    }
   }, [])
 
   return { contacts, setContacts, requests }

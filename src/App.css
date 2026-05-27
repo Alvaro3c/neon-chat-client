@@ -61,6 +61,7 @@
 
 /* ── Body — dark backdrop, buddy list centered ───────────── */
 .app__body {
+  position: relative;       /* containing block for ParticleBackground */
   flex: 1;
   display: flex;
   flex-direction: column;

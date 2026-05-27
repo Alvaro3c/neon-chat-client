@@ -3,6 +3,8 @@
    ──────────────────────────────────────────────────────────── */
 
 .sidebar {
+  position: relative;   /* establishes stacking context above particle layer */
+  z-index: 1;
   width: 80vw;
   /* fills available body height minus top hint + gaps + footer */
   max-height: calc(100vh - 130px);

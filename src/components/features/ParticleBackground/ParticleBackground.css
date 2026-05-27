@@ -1,0 +1,51 @@
+/* ── ParticleBackground ──────────────────────────────────────
+   Ambient floating particles for the Neon/Emo aesthetic.
+   - Mounted inside .app__body, behind the ContactsPanel card
+   - Pure CSS @keyframes — no canvas, no JS loop
+   - pointer-events: none throughout so clicks pass through
+   ──────────────────────────────────────────────────────────── */
+
+.particle-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  /* z-index: 0 so ContactsPanel (rendered after, z-index: auto)
+     naturally paints on top via DOM order */
+  z-index: 0;
+}
+
+.particle {
+  position: absolute;
+  bottom: -14px;            /* start just below the visible area */
+  border-radius: 1px;       /* nearly-sharp corners → diamond silhouette */
+
+  /*
+   * rotate(45deg) turns a square into a diamond.
+   * Carried through the keyframe to avoid a mid-loop snap.
+   */
+  animation: particle-float linear infinite;
+  will-change: transform, opacity;
+}
+
+/* ── Float-up keyframe ──────────────────────────────────────
+   Translates from bottom of .app__body up to ~110 vh above.
+   .app overflow: hidden clips anything that exits the viewport.
+
+   Opacity holds at 1 until 80 % of the trip, then fades to 0.
+   The infinite loop resets while the particle is invisible →
+   no visible flash on the loop boundary.
+   ──────────────────────────────────────────────────────────── */
+@keyframes particle-float {
+  0% {
+    transform: translateY(0) rotate(45deg);
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-110vh) rotate(45deg);
+    opacity: 0;
+  }
+}

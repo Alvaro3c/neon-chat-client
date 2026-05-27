@@ -5,6 +5,7 @@ import useAuth from './hooks/useAuth'
 import ContactsPanel from './components/features/ContactsPanel'
 import ChatWindow from './components/features/ChatWindow'
 import LoginToast from './components/shared/LoginToast'
+import ParticleBackground from './components/features/ParticleBackground'
 import LoginPage from './pages/Login'
 import './styles/global.css'
 import './App.css'
@@ -78,6 +79,7 @@ function AppShell() {
 
       {/* ── Body — dark backdrop with centered buddy list ────── */}
       <div className="app__body">
+        <ParticleBackground />
         <ContactsPanel />
       </div>
 

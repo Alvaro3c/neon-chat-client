@@ -1,4 +1,4 @@
-import { IconMaximize, IconClose } from '../ChatWindow/icons'
+import { IconClose } from '../ChatWindow/icons'
 import './MinimizedPill.css'
 
 // How many minimized pills fit per row before wrapping to the next line
@@ -28,19 +28,13 @@ function MinimizedPill({ contact, zIndex, minimizedIndex, isBlinking, onUnminimi
 
   return (
     <div
-      className={`chat-window chat-window--minimized animate-fade-in${isBlinking ? ' chat-window--has-notification' : ''}`}
+      className={`minimized-pill animate-fade-in${isBlinking ? ' minimized-pill--has-notification' : ''}`}
       style={{ zIndex, left: pillLeft, bottom: pillBottom }}
       onClick={onUnminimize}
     >
       <div className="chat-window__minimized-bar">
         <span style={{ fontSize: 18 }}>{contact.avatar}</span>
         <span className="chat-window__minimized-name">{contact.name}</span>
-        <button
-          className="chat-window__ctrl-btn"
-          onClick={(e) => { e.stopPropagation(); onUnminimize() }}
-        >
-          <IconMaximize />
-        </button>
         <button
           className="chat-window__ctrl-btn chat-window__ctrl-btn--close"
           onClick={(e) => { e.stopPropagation(); onClose() }}

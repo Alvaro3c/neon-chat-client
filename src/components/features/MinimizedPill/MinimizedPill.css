@@ -4,7 +4,7 @@
    inline styles computed from the pill's index.
    ──────────────────────────────────────────────────────────── */
 
-.chat-window--minimized {
+.minimized-pill {
   position: fixed;
   width: auto;
   height: auto;
@@ -59,7 +59,7 @@
   }
 }
 
-.chat-window--has-notification .chat-window__minimized-bar {
+.minimized-pill--has-notification .chat-window__minimized-bar {
   animation:
     pill-notify 0.50s ease-in-out 0s 8,
     /* fast   — 2.4 s total */

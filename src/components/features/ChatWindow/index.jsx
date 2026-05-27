@@ -109,8 +109,6 @@ function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimized
 
   // ── Toolbar handlers ──────────────────────────────────────
   function handleBuzz() {
-    setIsBuzzing(true)
-    setTimeout(() => setIsBuzzing(false), 820)
     chatSocket.sendBuzz(contactId)
     addSystemMessage(contactId, `You sent ${contact?.name ?? 'them'} a buzz! 〰️`)
   }

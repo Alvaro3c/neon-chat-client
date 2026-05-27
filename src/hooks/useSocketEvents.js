@@ -106,6 +106,9 @@ export function useSocketEvents({
       }
 
       case 'buzz': {
+        // Ignore the server echo when the current user is the one who sent the buzz
+        if (event.senderUid === currentUserUidRef.current) break
+
         // Increment signal so ChatWindow's useEffect fires even on repeated buzzes
         setBuzzSignals((prev) => ({
           ...prev,

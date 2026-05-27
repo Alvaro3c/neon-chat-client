@@ -7,12 +7,8 @@ import { useChat } from '../../../context/ChatContext'
 import { useChatWindowDrag } from '../../../hooks/useChatWindowDrag'
 import { useChatComposer } from '../../../hooks/useChatComposer'
 import * as chatSocket from '../../../services/socket/chatSocket'
+import { playBuzzSound } from '../../../hooks/useSounds'
 import './ChatWindow.css'
-
-function playBuzzSound() {
-  const audio = new Audio('/assets/sounds/zumbido.mp3')
-  audio.play().catch(() => {}) // silently ignore autoplay policy blocks
-}
 
 /**
  * ChatWindow

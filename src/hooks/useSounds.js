@@ -29,3 +29,15 @@ export function playNewMessageSound() {
   newMessageAudio.currentTime = 0
   newMessageAudio.play().catch(() => {})
 }
+
+// ── Buzz-sound singleton ──────────────────────────────────────
+// Module-level instance created once; reused on every incoming buzz
+// to avoid allocating a new Audio node on each call.
+const buzzAudio = new Audio('/assets/sounds/zumbido.mp3')
+buzzAudio.preload = 'auto'
+buzzAudio.volume  = 1.0          // buzz is intentionally loud
+
+export function playBuzzSound() {
+  buzzAudio.currentTime = 0
+  buzzAudio.play().catch(() => {}) // silently ignore autoplay policy blocks
+}

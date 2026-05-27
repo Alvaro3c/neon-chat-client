@@ -21,7 +21,7 @@
 
 import { useCallback, useEffect, useRef } from 'react'
 import * as chatSocket from '../services/socket/chatSocket'
-import { auth } from '../services/firebase/auth'
+import useAuth from './useAuth'
 import { playNewMessageSound } from './useSounds'
 
 export function useSocketEvents({
@@ -35,6 +35,7 @@ export function useSocketEvents({
   openChatMinimized,
   addLoginToast,
 }) {
+  const { user } = useAuth()
   const typingTimers    = useRef({})
   const prevStatusesRef = useRef({}) // { [uid]: { status, mood } }
 
@@ -45,12 +46,16 @@ export function useSocketEvents({
   const contactsRef = useRef([])
   useEffect(() => { contactsRef.current = contacts }, [contacts])
 
+  /** Ref that mirrors the current user's uid — same pattern as contactsRef. */
+  const currentUserUidRef = useRef(user?.uid)
+  useEffect(() => { currentUserUidRef.current = user?.uid }, [user])
+
   const handleSocketEvent = useCallback((event) => {
     switch (event.type) {
 
       case 'message': {
         // Determine direction from the server's senderUid field
-        const sender = event.senderUid === auth.currentUser?.uid ? 'me' : 'them'
+        const sender = event.senderUid === currentUserUidRef.current ? 'me' : 'them'
         setMessages((prev) => ({
           ...prev,
           [event.conversationId]: [

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import Avatar from '../../shared/Avatar'
-import { auth } from '../../../services/firebase/auth'
+import useAuth from '../../../hooks/useAuth'
 import { updateUserDisplayName } from '../../../services/firebase/users'
 import * as chatSocket from '../../../services/socket/chatSocket'
 import { USER_STATUSES, getStatusDot } from '../../../constants/statuses'
@@ -15,8 +15,10 @@ import './ProfileFooter.css'
  * changes via WebSocket and Firestore.
  */
 function ProfileFooter() {
+  const { user } = useAuth()
+
   // ── Name ─────────────────────────────────────────────────
-  const [userName, setUserName] = useState(() => auth.currentUser?.displayName || 'xX_You_Xx')
+  const [userName, setUserName] = useState(user?.displayName || 'xX_You_Xx')
   const [editingName, setEditingName] = useState(false)
   const [tempName, setTempName] = useState(userName)
 
@@ -56,7 +58,7 @@ function ProfileFooter() {
     setEditingName(false)
     if (next === userName) return
     setUserName(next)
-    const uid = auth.currentUser?.uid
+    const uid = user?.uid
     if (uid) {
       updateUserDisplayName(uid, next).catch((err) =>
         console.error('[ProfileFooter] Failed to save display name:', err)
@@ -87,7 +89,7 @@ function ProfileFooter() {
     <div className="sidebar__footer">
       {/* Avatar with live status dot */}
       <Avatar
-        src={auth.currentUser?.photoURL || undefined}
+        src={user?.photoURL || undefined}
         emoji="🎧"
         status={getStatusDot(userStatus)}
         size="md"

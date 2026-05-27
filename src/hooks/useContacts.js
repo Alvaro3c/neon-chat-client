@@ -17,11 +17,12 @@
  */
 
 import { useState, useEffect, useRef } from 'react'
-import { auth } from '../services/firebase/auth'
+import useAuth from './useAuth'
 import { getUserById } from '../services/firebase/users'
 import { subscribeToConversations } from '../services/firebase/conversations'
 
 export function useContacts() {
+  const { user } = useAuth()
   const [contacts, setContacts] = useState([])
   const [requests, setRequests] = useState([])
 
@@ -29,10 +30,9 @@ export function useContacts() {
   const callCounterRef = useRef(0)
 
   useEffect(() => {
-    const currentUser = auth.currentUser
-    if (!currentUser) return
+    if (!user) return
 
-    const myUid = currentUser.uid
+    const myUid = user.uid
 
     /**
      * Given a conversation document, fetch the OTHER participant's profile
@@ -85,7 +85,7 @@ export function useContacts() {
       callCounterRef.current = 0
       unsub()
     }
-  }, [])
+  }, [user])
 
   return { contacts, setContacts, requests }
 }

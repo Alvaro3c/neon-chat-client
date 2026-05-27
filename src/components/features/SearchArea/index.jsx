@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Input from '../../shared/Input'
-import { auth } from '../../../services/firebase/auth'
+import useAuth from '../../../hooks/useAuth'
 import { getUserByEmail } from '../../../services/firebase/users'
 import { createConversation } from '../../../services/firebase/conversations'
 import './SearchArea.css'
@@ -23,6 +23,7 @@ function SearchArea({
   requestCount,
   onConvCreated,
 }) {
+  const { user } = useAuth()
   const [addingConv, setAddingConv] = useState(false)
   const [newConvEmail, setNewConvEmail] = useState('')
   const [convError, setConvError] = useState('')
@@ -33,7 +34,7 @@ function SearchArea({
     const email = newConvEmail.trim()
     if (!email) return
 
-    const currentUser = auth.currentUser
+    const currentUser = user
     if (!currentUser) return
 
     setConvLoading(true)

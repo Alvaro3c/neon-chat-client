@@ -164,10 +164,30 @@ export function useChatComposer({ contactId, sendMessage }) {
   }
 
   function handleComposerPaste(e) {
-    // Strip HTML — paste only plain text so auto-replace still works
+    // Strip HTML — paste only plain text so auto-replace still works.
+    // Uses Selection/Range instead of the deprecated execCommand API.
     e.preventDefault()
     const text = e.clipboardData.getData('text/plain')
-    document.execCommand('insertText', false, text)
+    if (!text) return
+
+    const sel = window.getSelection()
+    if (!sel || !sel.rangeCount) return
+
+    const range = sel.getRangeAt(0)
+    range.deleteContents()
+
+    const textNode = document.createTextNode(text)
+    range.insertNode(textNode)
+
+    // Place cursor right after the inserted text
+    const after = document.createRange()
+    after.setStartAfter(textNode)
+    after.collapse(true)
+    sel.removeAllRanges()
+    sel.addRange(after)
+
+    // Sync isEmpty state and trigger shortcode auto-replace
+    handleComposerInput()
   }
 
   function handleSend() {

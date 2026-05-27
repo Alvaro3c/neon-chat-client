@@ -22,7 +22,6 @@
 import { useCallback, useEffect, useRef } from 'react'
 import * as chatSocket from '../services/socket/chatSocket'
 import useAuth from './useAuth'
-import { playNewMessageSound } from './useSounds'
 
 export function useSocketEvents({
   contacts,
@@ -70,8 +69,6 @@ export function useSocketEvents({
         }))
         // Notify for incoming messages from the other participant
         if (sender === 'them') {
-          playNewMessageSound()
-
           // Increment the signal so ChatWindow knows to blink the pill
           setNewMessageSignals((prev) => ({
             ...prev,

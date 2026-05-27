@@ -7,7 +7,7 @@ import { useChat } from '../../../context/ChatContext'
 import { useChatWindowDrag } from '../../../hooks/useChatWindowDrag'
 import { useChatComposer } from '../../../hooks/useChatComposer'
 import * as chatSocket from '../../../services/socket/chatSocket'
-import { playBuzzSound } from '../../../hooks/useSounds'
+import { playBuzzSound, playNewMessageSound } from '../../../hooks/useSounds'
 import './ChatWindow.css'
 
 /**
@@ -99,7 +99,11 @@ function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimized
     if (current <= lastSeenMsgSignalRef.current) return
     lastSeenMsgSignalRef.current = current
 
-    if (isMinimizedRef.current) setIsBlinking(true)
+    if (isMinimizedRef.current) {
+      setIsBlinking(true)
+      playNewMessageSound() // only when hidden — user isn't watching the conversation
+    }
+    // window is open and focused → user already sees the message → no sound
   }, [newMessageSignals[contactId]]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Clear blink as soon as the user opens the window

@@ -71,6 +71,7 @@ function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimized
   const lastSeenMsgSignalRef = useRef(0)
   // Mirror isMinimized as a ref so the effect below always reads the live value
   const isMinimizedRef       = useRef(isMinimized)
+  const buzzTimerRef         = useRef(null)   // ID del setTimeout de la animación de buzz
   useEffect(() => { isMinimizedRef.current = isMinimized }, [isMinimized])
 
   // ── React to incoming buzz ────────────────────────────────
@@ -81,12 +82,18 @@ function ChatWindow({ contactId, zIndex, initialPosition, isMinimized, minimized
 
     const el = windowRef.current
     if (el) {
+      clearTimeout(buzzTimerRef.current)     // cancel any in-flight timer first
       el.classList.remove('chat-window--buzzed')
       void el.offsetWidth                    // force reflow → animation restarts
       el.classList.add('chat-window--buzzed')
-      setTimeout(() => el.classList.remove('chat-window--buzzed'), 820)
+      buzzTimerRef.current = setTimeout(
+        () => el.classList.remove('chat-window--buzzed'),
+        820
+      )
     }
     playBuzzSound() // only the receiver hears it
+
+    return () => clearTimeout(buzzTimerRef.current)
   }, [buzzSignals[contactId]]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── React to incoming messages ────────────────────────────
